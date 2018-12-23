@@ -1,0 +1,30 @@
+-->Links and Info<--
+
+-> https://sunrise-sunset.org/api (Sunset and Sunrise API) --> 'https://api.sunrise-sunset.org/json'
+-> https://ipinfo.io/developers (IP Geolocator API) --> 'https://ipinfo.io/json' ['04160a00359cbf']
+-> https://javascript.info/promise-chaining (Promise Info)
+-> 
+
+-->Halachik Info From Rav Avi<--
+
+-> How to divide up day and night times.
+-> long. lat. info needed?
+-> dif info needed?
+-> different shitos?
+
+-->Potential App Info/Ideas/Questions<--
+
+-> How to create a digital watch that counts based off my own time schema...
+-> How to  create an analog watch...
+-> How to set watch to give rmeinders when certain times are reached...
+-> How to pull data based off info retrieved from API...
+-> How to create a counter/clock based off unique calculations...
+
+-->Watch Interface (Digital/Analog)<--
+
+-> See /project_images
+
+-->Misc<--
+
+-> Writing in Hebrew
+
