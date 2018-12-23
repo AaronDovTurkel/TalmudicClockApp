@@ -310,7 +310,7 @@ function reg_time_pull() {
 	clock.regularTime.seconds = regularTimePull.getSeconds();
 	clock.regularTime.milliseconds = regularTimePull.getMilliseconds();
 	clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
-	clock.regularTime.regDayCurrentInSeconds = (((((clock.regularTime.hours * 60) + (clock.regularTime.minutes)) * 60)) + (clock.regularTime.seconds));
+	clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime.hours, clock.regularTime.minutes, clock.regularTime.seconds);
 	regClockArray = `This is the current regular time: ${clock.regularTime.hours}:${clock.regularTime.minutes}:${clock.regularTime.seconds}`;
 }
 
@@ -369,3 +369,10 @@ function time_sync(clock) {
 /*Run All Functions*/
 reg_time_pull();
 first_promise();
+
+//Simplifying Functions//
+function convertTimeToSeconds(hours, minutes, seconds) {
+	return ((((hours * 60) + (minutes)) * 60)  + seconds);
+}
+
+
