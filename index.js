@@ -342,40 +342,19 @@ function time_sync(clock) {
 			clock.day_clock.hours = Math.trunc(currentTalmudicDayHour);
 			clock.day_clock.minutes = extractMinutesOrSecondsFromDecimal(currentTalmudicDayHour);
 			clock.day_clock.seconds = extractMinutesOrSecondsFromDecimal(currentTalmudicDayTimeInMinutes);
+			console.log(clock.day_clock);
 		} else {
 			let currentTalmudicNightTime = (clock.night_clock.currentTalmudicSecondFromSunset);
-			let currentTalmudicNightTime_secondsPerHour = currentTalmudicNightTime / clock.night_clock.talmudicNightMinute;
-			let test = currentTalmudicNightTime_secondsPerHour / 60;
-			console.log(test);
-			let test2 = (test) % 60;
-			console.log(test2);
-			clock.night_clock.hours = Math.trunc(test);
-			console.log(clock.night_clock.hours);
-			if (currentTalmudicNightTime_secondsPerHourSplit[0] <= 59) {
-				clock.night_clock.minutes = parseInt(currentTalmudicNightTime_secondsPerHourSplit[0]);
-			} else {
-				clock.night_clock.minutes = parseInt((String(((parseInt(currentTalmudicNightHourSplit[1].substring(0, 3))) * 600) / 1000)).substring(0, 2));
-			};
-			clock.night_clock.seconds = parseInt((String(((parseInt(currentTalmudicNightTime_secondsPerHourSplit[1].substring(0, 2))) * clock.night_clock.talmudicNightMinute) / 100)).substring(0, 2));
+			let currentTalmudicNightTimeInMinutes = currentTalmudicNightTime / clock.night_clock.talmudicNightMinute;
+			let currentTalmudicNightHour = (currentTalmudicNightTimeInMinutes / 60);
+			clock.night_clock.hours = Math.trunc(currentTalmudicNightHour);
+			clock.night_clock.minutes = extractMinutesOrSecondsFromDecimal(currentTalmudicNightHour);
+			clock.night.seconds = extractMinutesOrSecondsFromDecimal(currentTalmudicNightTimeInMinutes);
 			console.log(clock.night_clock);
 		}
 	resolve(clock);
 	})
 }
-
-/*Other Functions to be inserted above*/
-// A. Insert dif location
-// B. Sync Clock Button
-// C. Important time functions...
-
-
-/*Drawing the Analog Clock Side (DACS)*/
-//
-
-
-/*Drawing the Digital Clocks Side (DDCS)*/
-// 
-
 
 //Simplifying Functions//
 function convertTimeToSeconds(time) {
@@ -408,14 +387,12 @@ function splitAndParseInt(time) {
 
 function spliceDecimalPoint(int) {
 	let numberSplit = (String(int)).split(".");
-	console.log(`line 441. ` + numberSplit);
 	let splitParse = parseInt(numberSplit[1]);
 	info_store.minuteConversion = splitParse
 	return info_store.minuteConversion;
 }
 
 function getlength(int) {
-	console.log((`line 448. `) + ((((String(int)).replace('.', '')).length) - (String((Math.trunc(int)))).length));
     return (((String(int)).replace('.', '')).length) - (String((Math.trunc(int)))).length;
 }
 
@@ -440,21 +417,13 @@ function extractMinutesOrSecondsFromDecimal(number) {
 	let finalResult = 00;
 	if ((number - (Math.floor(number))) !== 0) {
 		spliceDecimalPoint(number);
-		console.log(`line 472. ` + info_store.minuteConversion);
 		let lengthOfDecimal = getlength(number);
-		console.log(`line 474. ` + lengthOfDecimal);
 		let minuteConverted = ((info_store.minuteConversion * 60) / padZero1(lengthOfDecimal));
-		console.log(`line 476. ` + minuteConverted);
 		if ((String(minuteConverted)).includes("e") === true) {
 			finalResult = 00;
-			console.log(`line 479. ` + ((String(minuteConverted)).includes("e") === true));
 		} else {
 			finalResult = (parseInt(String(minuteConverted).substring(0, 2)));
-			console.log(`line 482. ` + (parseInt(String(minuteConverted).substring(0, 2))));
 		}
-		/*if ((String(finalResult)).length === 1) {
-			finalResult = `0${finalResult}`;
-		}*/
 		return finalResult;
 	} else {
 		return 00;
@@ -484,5 +453,55 @@ function run_all_functions() {
 			}
 		})
 }
+
+/*Other Functions to be inserted above*/
+// A. Insert dif location
+// B. Sync Clock Button
+// C. Important time functions...
+
+
+/*Drawing the Analog Clock Side (DACS)*/
+//
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+let radius = canvas.height / 2;
+ctx.translate(radius, radius);
+radius = radius * 0.90
+drawClock();
+
+function drawClock() {
+	drawFace(ctx, radius);
+  }
+  
+function drawFace(ctx, radius) {
+	let grad;
+
+	ctx.beginPath();
+	ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+	ctx.fillStyle = 'white';
+	ctx.fill();
+
+	grad = ctx.createRadialGradient(0, 0 ,radius * 0.95, 0, 0, radius * 1.05);
+	grad.addColorStop(0, '#333');
+	grad.addColorStop(0.5, 'green');
+	grad.addColorStop(1, '#333');
+	ctx.strokeStyle = grad;
+	ctx.lineWidth = radius*0.1;
+	ctx.stroke();
+
+	ctx.beginPath();
+	ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
+	test = ctx.createRadialGradient(0, 0 ,radius * 0.95, 0, 0, radius * 1.05);
+	test.addColorStop(0, '#333');
+	test.addColorStop(0.5, 'green');
+	test.addColorStop(1, '#333');
+	ctx.strokeStyle = test;
+	ctx.lineWidth = radius*0.1;
+	ctx.stroke();
+	ctx.fillStyle = 'green';
+	ctx.fill();
+}
+/*Drawing the Digital Clocks Side (DDCS)*/
+// 
 
 run_all_functions();
