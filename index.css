@@ -1,0 +1,108 @@
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	font-family: 'Spicy Rice', cursive;
+	padding: 0;
+	margin: 0;
+    background-color: #ffffff;
+}
+
+html {
+    display: grid;
+    grid-template-rows: 2fr 5fr 1fr;
+    grid-template-columns: 1fr;
+}
+
+p {
+    padding: 0;
+    margin: 0;
+}
+
+.header {
+	grid-row: 1 / 2;
+	justify-self: center;
+    align-self: center;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.main_content {
+	grid-row: 2 / 3;
+	justify-self: center;
+    align-self: center;
+    border: 1px solid black;
+    display: grid;
+    grid-template-rows: 1fr 5fr;
+    grid-template-columns: 1fr 3fr 1fr;
+    justify-content: center;
+    align-content: center;
+}
+
+.footer {
+	grid-row: 3 / 4;
+	justify-self: center;
+    align-self: center;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.digital_clocks {
+    grid-row: 1 / 2;
+    grid-column: 1 / 4;
+	justify-self: stretch;
+    align-self: stretch;
+    border: 1px solid black;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+    justify-content: center;
+    align-content: center;
+}
+
+.analog_clock {
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
+	justify-self: stretch;
+    align-self: stretch;
+    border: 1px solid black;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    align-content: center;
+}
+
+.aside_time_info {
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+	justify-self: center;
+    align-self: center;
+    border: 1px solid black;
+}
+
+.regular_digital_clock {
+	grid-column: 1 / 2;
+	justify-self: center;
+    align-self: center;
+    border: 1px solid black;
+}
+
+.talmudic_digital_clock {
+	grid-column: 2 / 3;
+	justify-self: center;
+    align-self: center;
+    border: 1px solid black;
+}
+
+
+/*canvas*/
+
+#canvas {
+    background-color: white;
+    grid-row: 1 / 3;
+    grid-column: 1 / 3;
+	justify-self: center;
+    align-self: center;
+}

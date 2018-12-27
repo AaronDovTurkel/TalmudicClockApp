@@ -114,9 +114,11 @@ function new_day_toggle() {
 				) {
 					console.log(`this 'if' worked on 115`);
 					new_day = false;
+					before_sunrise_promise()
 				} else {
-					console.log(`this 'else' worked on 118`);
+					console.log(`this 'else' worked on 119`);
 					new_day = true;
+					after_sunrise_promise()
 				}
 			})
 		resolve();
@@ -136,11 +138,11 @@ function before_sunrise_promise() {
 			convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
 			time_sync(clock);
 			if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
-				console.log(`this 'if' is being called on 139`);
+				console.log(`this 'if' is being called on 141`);
 				day_ticker_trigger(clock);
 				drawClock();
 			} else {
-				console.log(`this 'else' is being called on 142`);
+				console.log(`this 'else' is being called on 145`);
 				night_ticker_trigger(clock);
 				drawClock();
 			}
@@ -226,7 +228,7 @@ function day_night_length_calculator() {
 			// Before sunrise but after midnight
 			console.log(`this 'else if' worked on 223`);
 			clock.day_clock.currentTalmudicSecondFromSunrise = 00;
-			clock.night_clock.currentTalmudicSecondFromSunset = ((clock.night_clock.nightLengthInSeconds) + (clock.regularTime.regDayCurrentInSeconds));
+			clock.night_clock.currentTalmudicSecondFromSunset = ((86400 - (clock.day_clock.dayLengthInSeconds + clock.regularTime.sunriseToday)) + (clock.regularTime.regDayCurrentInSeconds));
 		} else if ((((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday)) >= (clock.day_clock.dayLengthInSeconds)) && ((clock.regularTime.regDayCurrentInSeconds >= clock.day_clock.dayLengthInSeconds))) {
 			// after sunset but before midnight
 			console.log(`This 'else if' worked on 228`)
@@ -257,6 +259,8 @@ function day_ticker_trigger(clock) {
 			dayClockArray = `${clock.day_clock.hours}:${clock.day_clock.minutes}:${clock.day_clock.seconds}`;
 			console.log(regClockArray);
 			drawClock();
+			$(regular_digital_clock_display);
+			$(talmudic_digital_clock_display);
 		}, 1000)
 		dayTicker;	
 		resolve(clock);	
@@ -272,6 +276,8 @@ function night_ticker_trigger(clock) {
 		nightClockArray = `${clock.night_clock.hours}:${clock.night_clock.minutes}:${clock.night_clock.seconds}`;
 		console.log(regClockArray);
 		drawClock();
+		$(regular_digital_clock_display);
+		$(talmudic_digital_clock_display);
 	}, 1000)
 	nightTicker;
 }
@@ -469,20 +475,6 @@ let info_store = {
 }
 
 
-/*Run All Functions*/
-
-function run_all_functions() {
-	reg_time_pull();
-	new_day_toggle()
-		.then(() => {
-			if (new_day === true) {
-				after_sunrise_promise();
-			} else {
-				before_sunrise_promise();
-			}
-		})
-}
-
 /*Other Functions to be inserted above*/
 // A. Insert dif location
 // B. Sync Clock Button
@@ -585,5 +577,31 @@ function drawHand(ctx, pos, length, width) {
 
 /*Drawing the Digital Clocks Side (DDCS)*/
 // 
+function regular_digital_clock_display() {
+	$('.regular_digital_clock').html(
+		`<p>Regular Time: ${regClockArray}</p>`
+	)
+}
+
+function talmudic_digital_clock_display() {
+	if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
+		$('.talmudic_digital_clock').html(
+			`<p>Talmudic Time: ${dayClockArray}</p>`
+		)
+	} else {
+		$('.talmudic_digital_clock').html(
+			`<p>Talmudic Time: ${nightClockArray}</p>`
+		)
+	}
+
+}
+
+
+/*Run All Functions*/
+
+function run_all_functions() {
+	reg_time_pull();
+	new_day_toggle();
+}
 
 run_all_functions();

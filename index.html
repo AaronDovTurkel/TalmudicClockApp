@@ -4,22 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="A quiz that tests your guitar knowledge.">
     <title>Document</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Spicy+Rice" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <section class="header">
-
-        </section>
-
-        <section class="main_content>
-            <canvas id="canvas" width="400" height="400" style="background-color:white"></canvas>
-        </section>
-        
-        <section class="footer">
-
-        </section>
-    </div>
+    <section class="header">
+        <p>The Talmudic Clock</p>
+    </section>
+    <section class="main_content">
+        <div class="digital_clocks">
+            <div class="regular_digital_clock">
+                <p>regular_digital_clock</p>
+            </div>
+            <div class="talmudic_digital_clock">
+                <p>talmudic_digital_clock</p>
+                <p></p>
+            </div>
+        </div>
+        <div class="analog_clock">
+            <canvas id="canvas" width="300" height="300"></canvas>
+        </div>
+        <div class="aside_time_info">
+            <p>Shacharis: </p>
+            <br>
+            <p>Mid-day: </p>
+            <br>
+            <p>Minchah: </p>
+            <br>
+            <p>Shekeyah: </p>
+            <br>
+            <p>Maariv: </p>
+            <br>
+            <p>Mid-night: </p>
+        </div>
+    </section>
+    <section class="footer">
+        <p>Footer</p>
+    </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="index.js"></script>
 </body>
 </html>
