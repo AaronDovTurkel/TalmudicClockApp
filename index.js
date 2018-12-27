@@ -135,12 +135,14 @@ function before_sunrise_promise() {
 		.then(clock => {
 			convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
 			time_sync(clock);
-			if (clock.regularTime.regDayCurrentInSeconds < (86400 - info_store.timeInSecondsUtc)) {
+			if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
 				console.log(`this 'if' is being called on 139`);
 				day_ticker_trigger(clock);
+				drawClock();
 			} else {
 				console.log(`this 'else' is being called on 142`);
 				night_ticker_trigger(clock);
+				drawClock();
 			}
 		})
 };
@@ -153,12 +155,14 @@ function after_sunrise_promise() {
 		.then(clock => {
 			convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
 			time_sync(clock);
-			if (clock.regularTime.regDayCurrentInSeconds < (86400 - info_store.timeInSecondsUtc)) {
+			if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
 				console.log(`this 'if' is being called on 157`);
 				day_ticker_trigger(clock);
+				drawClock();
 			} else {
 				console.log(`this 'else' is being called on 160`);
 				night_ticker_trigger(clock);
+				drawClock();
 			}
 		})
 };
@@ -252,6 +256,7 @@ function day_ticker_trigger(clock) {
 			reg_time_pull();
 			dayClockArray = `${clock.day_clock.hours}:${clock.day_clock.minutes}:${clock.day_clock.seconds}`;
 			console.log(regClockArray);
+			drawClock();
 		}, 1000)
 		dayTicker;	
 		resolve(clock);	
@@ -266,6 +271,7 @@ function night_ticker_trigger(clock) {
 		reg_time_pull();
 		nightClockArray = `${clock.night_clock.hours}:${clock.night_clock.minutes}:${clock.night_clock.seconds}`;
 		console.log(regClockArray);
+		drawClock();
 	}, 1000)
 	nightTicker;
 }
@@ -276,7 +282,7 @@ function day_minute_hour_ticker_checker(clock) {
 		clock.day_clock.seconds = 00;
 		console.log(clock);
 	};
-	if (clock.day_clock.minutes >= 59) {
+	if (clock.day_clock.minutes > 59) {
 		clock.day_clock.hours = clock.day_clock.hours + 1;
 		clock.day_clock.minutes = 00;
 		console.log(clock.day_clock);
@@ -297,7 +303,7 @@ function night_minute_hour_ticker_checker(clock) {
 		clock.night_clock.seconds = 00;
 		console.log(clock);
 	};
-	if (clock.night_clock.minutes >= 59) {
+	if (clock.night_clock.minutes > 59) {
 		clock.night_clock.hours = clock.night_clock.hours + 1;
 		clock.night_clock.minutes = 00;
 		console.log(clock.night_clock);
@@ -340,16 +346,16 @@ function time_sync(clock) {
 			let currentTalmudicDayTimeInMinutes = (clock.day_clock.currentTalmudicSecondFromSunrise / clock.day_clock.talmudicDayMinute);
 			let currentTalmudicDayHour = (currentTalmudicDayTimeInMinutes / 60);
 			clock.day_clock.hours = Math.trunc(currentTalmudicDayHour);
-			clock.day_clock.minutes = extractMinutesOrSecondsFromDecimal(currentTalmudicDayHour);
-			clock.day_clock.seconds = extractMinutesOrSecondsFromDecimal(currentTalmudicDayTimeInMinutes);
+			clock.day_clock.minutes = extractMinutesFromDecimal(currentTalmudicDayHour);
+			clock.day_clock.seconds = extractSecondsFromDecimal(currentTalmudicDayTimeInMinutes);
 			console.log(clock.day_clock);
 		} else {
 			let currentTalmudicNightTime = (clock.night_clock.currentTalmudicSecondFromSunset);
 			let currentTalmudicNightTimeInMinutes = currentTalmudicNightTime / clock.night_clock.talmudicNightMinute;
 			let currentTalmudicNightHour = (currentTalmudicNightTimeInMinutes / 60);
 			clock.night_clock.hours = Math.trunc(currentTalmudicNightHour);
-			clock.night_clock.minutes = extractMinutesOrSecondsFromDecimal(currentTalmudicNightHour);
-			clock.night.seconds = extractMinutesOrSecondsFromDecimal(currentTalmudicNightTimeInMinutes);
+			clock.night_clock.minutes = extractMinutesFromDecimal(currentTalmudicNightHour);
+			clock.night_clock.seconds = extractSecondsFromDecimal(currentTalmudicNightTimeInMinutes);
 			console.log(clock.night_clock);
 		}
 	resolve(clock);
@@ -413,7 +419,7 @@ function padZero(int) {
 	return parsedNumber;
 }
 
-function extractMinutesOrSecondsFromDecimal(number) {
+function extractMinutesFromDecimal(number) {
 	let finalResult = 00;
 	if ((number - (Math.floor(number))) !== 0) {
 		spliceDecimalPoint(number);
@@ -424,6 +430,28 @@ function extractMinutesOrSecondsFromDecimal(number) {
 		} else {
 			finalResult = (parseInt(String(minuteConverted).substring(0, 2)));
 		}
+		return finalResult;
+	} else {
+		return 00;
+	}
+}
+
+function extractSecondsFromDecimal(number) {
+	let finalResult = 00;
+	let minuteConverted = 00;
+	if ((number - (Math.floor(number))) !== 0) {
+		spliceDecimalPoint(number);
+		let lengthOfDecimal = getlength(number);
+		if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
+			minuteConverted = ((info_store.minuteConversion * clock.day_clock.talmudicDayMinute) / padZero1(lengthOfDecimal));
+		} else {
+			minuteConverted = ((info_store.minuteConversion * clock.night_clock.talmudicNightMinute) / padZero1(lengthOfDecimal));
+		};
+		if ((String(minuteConverted)).includes("e") === true) {
+			finalResult = 00;
+		} else {
+			finalResult = (parseInt(String(minuteConverted).substring(0, 2)));
+		};
 		return finalResult;
 	} else {
 		return 00;
@@ -442,6 +470,7 @@ let info_store = {
 
 
 /*Run All Functions*/
+
 function run_all_functions() {
 	reg_time_pull();
 	new_day_toggle()
@@ -471,7 +500,9 @@ drawClock();
 
 function drawClock() {
 	drawFace(ctx, radius);
-  }
+	drawNumbers(ctx, radius);
+	drawTime(ctx, radius);
+}
   
 function drawFace(ctx, radius) {
 	let grad;
@@ -482,25 +513,76 @@ function drawFace(ctx, radius) {
 	ctx.fill();
 
 	grad = ctx.createRadialGradient(0, 0 ,radius * 0.95, 0, 0, radius * 1.05);
-	grad.addColorStop(0, '#333');
+	grad.addColorStop(0, 'white');
 	grad.addColorStop(0.5, 'green');
-	grad.addColorStop(1, '#333');
+	grad.addColorStop(1, 'white');
 	ctx.strokeStyle = grad;
 	ctx.lineWidth = radius*0.1;
 	ctx.stroke();
 
 	ctx.beginPath();
 	ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
-	test = ctx.createRadialGradient(0, 0 ,radius * 0.95, 0, 0, radius * 1.05);
-	test.addColorStop(0, '#333');
-	test.addColorStop(0.5, 'green');
-	test.addColorStop(1, '#333');
-	ctx.strokeStyle = test;
+	midGrad = ctx.createRadialGradient(0, 0 ,radius * 0.95, 0, 0, radius * 1.05);
+	midGrad.addColorStop(0, '#333');
+	midGrad.addColorStop(0.3, 'white');
+	midGrad.addColorStop(0.5, 'green');
+	midGrad.addColorStop(0.8, 'white');
+	midGrad.addColorStop(1, '#333');
+	ctx.strokeStyle = midGrad;
 	ctx.lineWidth = radius*0.1;
 	ctx.stroke();
 	ctx.fillStyle = 'green';
 	ctx.fill();
 }
+
+function drawNumbers(ctx, radius) {
+	let ang;
+	let num;
+	ctx.font = radius * 0.15 + "px arial";
+	ctx.textBaseline = "middle";
+	ctx.textAlign = "center";
+	ctx.fillStyle = 'grey';
+	for(num = 1; num < 13; num++){
+	  ang = num * Math.PI / 6;
+	  ctx.rotate(ang);
+	  ctx.translate(0, -radius * 0.85);
+	  ctx.rotate(-ang);
+	  ctx.fillText(num.toString(), 0, 0);
+	  ctx.rotate(ang);
+	  ctx.translate(0, radius * 0.85);
+	  ctx.rotate(-ang);
+	}
+}
+
+function drawTime(ctx, radius){
+	let hour = clock.night_clock.hours;
+	let minute = clock.night_clock.minutes;
+	let second = clock.night_clock.seconds;
+	//hour
+	hour = hour;
+	hour = ((hour*Math.PI)/6)+((minute*Math.PI)/(6*60))+((second*Math.PI)/((clock.night_clock.talmudicNightMinute * 2)*clock.night_clock.talmudicNightMinute));
+	drawHand(ctx, hour, radius*0.5, radius*0.07);
+	//minute
+	minute = (minute*Math.PI/30)+(second*Math.PI/((clock.night_clock.talmudicNightMinute / 2)*clock.night_clock.talmudicNightMinute));
+	drawHand(ctx, minute, radius*0.8, radius*0.05);
+	// second
+	second = (second*Math.PI/(clock.night_clock.talmudicNightMinute / 2));
+	drawHand(ctx, second, radius*0.9, radius*0.02);
+	console.log(`The angle of hands... Hour: '${hour}', Minute: '${minute}', Second: '${second}'`);
+}
+  
+function drawHand(ctx, pos, length, width) {
+	ctx.beginPath();
+	ctx.lineWidth = width;
+	ctx.lineCap = "round";
+	ctx.moveTo(0,0);
+	ctx.rotate(pos);
+	ctx.lineTo(0, -length);
+	ctx.stroke();
+	ctx.rotate(-pos);
+}
+
+
 /*Drawing the Digital Clocks Side (DDCS)*/
 // 
 
