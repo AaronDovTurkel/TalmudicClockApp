@@ -12,37 +12,24 @@
 </head>
 <body>
     <section class="header">
-        <p>The Talmudic Clock</p>
+        <span class="bsd">BS"D</span>
+        <span class="title">The Talmudic Clock</span>
     </section>
-    <section class="main_content">
-        <div class="digital_clocks">
-            <div class="regular_digital_clock">
-                <p>regular_digital_clock</p>
-            </div>
-            <div class="talmudic_digital_clock">
-                <p>talmudic_digital_clock</p>
-                <p></p>
-            </div>
-        </div>
-        <div class="analog_clock">
-            <canvas id="canvas" width="300" height="300"></canvas>
-        </div>
-        <div class="aside_time_info">
-            <p>Shacharis: </p>
-            <br>
-            <p>Mid-day: </p>
-            <br>
-            <p>Minchah: </p>
-            <br>
-            <p>Shekeyah: </p>
-            <br>
-            <p>Maariv: </p>
-            <br>
-            <p>Mid-night: </p>
-        </div>
-    </section>
+    <div class="regular_digital_clock">
+        <p>Regular</p>
+        <p>Time</p>
+        <span class="regularTimeDisplay">...</span>
+    </div>
+    <div class="talmudic_digital_clock">
+        <p>Talmudic</p>
+        <p>Time</p>
+        <span class="talmudicTimeDisplay">...</span>
+    </div>
+    <div class="analog_clock">
+        <canvas id="canvas" width="400px" height="400px"></canvas>
+    </div>
     <section class="footer">
-        <p>Footer</p>
+        <button type="button" class="settings"></button>
     </section>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="index.js"></script>

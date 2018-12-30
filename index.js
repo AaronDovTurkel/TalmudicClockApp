@@ -256,7 +256,7 @@ function day_ticker_trigger(clock) {
 			console.log(dayClockArray);
 			day_minute_hour_ticker_checker(clock);
 			reg_time_pull();
-			dayClockArray = `${clock.day_clock.hours}:${clock.day_clock.minutes}:${clock.day_clock.seconds}`;
+			dayClockArray = `${padArrayDisplay(clock.day_clock.hours)}${clock.day_clock.hours}:${padArrayDisplay(clock.day_clock.minutes)}${clock.day_clock.minutes}:${padArrayDisplay(clock.day_clock.seconds)}${clock.day_clock.seconds}`;
 			console.log(regClockArray);
 			drawClock();
 			$(regular_digital_clock_display);
@@ -273,7 +273,7 @@ function night_ticker_trigger(clock) {
 		console.log(nightClockArray);
 		night_minute_hour_ticker_checker(clock);
 		reg_time_pull();
-		nightClockArray = `${clock.night_clock.hours}:${clock.night_clock.minutes}:${clock.night_clock.seconds}`;
+		nightClockArray = `${padArrayDisplay(clock.night_clock.hours)}${clock.night_clock.hours}:${padArrayDisplay(clock.night_clock.minutes)}${clock.night_clock.minutes}:${padArrayDisplay(clock.night_clock.seconds)}${clock.night_clock.seconds}`;
 		console.log(regClockArray);
 		drawClock();
 		$(regular_digital_clock_display);
@@ -338,7 +338,7 @@ function reg_time_pull() {
 	clock.regularTime.milliseconds = regularTimePull.getMilliseconds();
 	clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
 	clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime);
-	regClockArray = `${clock.regularTime.hours}:${clock.regularTime.minutes}:${clock.regularTime.seconds}`;
+	regClockArray = `${padArrayDisplay(clock.regularTime.hours)}${clock.regularTime.hours}:${padArrayDisplay(clock.regularTime.minutes)}${clock.regularTime.minutes}:${padArrayDisplay(clock.regularTime.seconds)}${clock.regularTime.seconds}`;
 }
 
 let nightClockArray = '';
@@ -464,6 +464,14 @@ function extractSecondsFromDecimal(number) {
 	}
 }
 
+function padArrayDisplay(int) {
+	if ((String(int).length) === 1) {
+		return `0`;
+	} else {
+		return ``;
+	}
+}
+
 
 /*Extra Store*/
 
@@ -493,7 +501,11 @@ drawClock();
 function drawClock() {
 	drawFace(ctx, radius);
 	drawNumbers(ctx, radius);
-	drawTime(ctx, radius);
+	if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
+		drawTimeDay(ctx, radius);
+	} else {
+		drawTimeNight(ctx, radius);
+	}
 }
   
 function drawFace(ctx, radius) {
@@ -516,9 +528,6 @@ function drawFace(ctx, radius) {
 	ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
 	midGrad = ctx.createRadialGradient(0, 0 ,radius * 0.95, 0, 0, radius * 1.05);
 	midGrad.addColorStop(0, '#333');
-	midGrad.addColorStop(0.3, 'white');
-	midGrad.addColorStop(0.5, 'green');
-	midGrad.addColorStop(0.8, 'white');
 	midGrad.addColorStop(1, '#333');
 	ctx.strokeStyle = midGrad;
 	ctx.lineWidth = radius*0.1;
@@ -546,7 +555,7 @@ function drawNumbers(ctx, radius) {
 	}
 }
 
-function drawTime(ctx, radius){
+function drawTimeNight(ctx, radius){
 	let hour = clock.night_clock.hours;
 	let minute = clock.night_clock.minutes;
 	let second = clock.night_clock.seconds;
@@ -562,6 +571,23 @@ function drawTime(ctx, radius){
 	drawHand(ctx, second, radius*0.9, radius*0.02);
 	console.log(`The angle of hands... Hour: '${hour}', Minute: '${minute}', Second: '${second}'`);
 }
+
+function drawTimeDay(ctx, radius){
+	let hour = clock.day_clock.hours;
+	let minute = clock.day_clock.minutes;
+	let second = clock.day_clock.seconds;
+	//hour
+	hour = hour;
+	hour = ((hour*Math.PI)/6)+((minute*Math.PI)/(6*60))+((second*Math.PI)/((clock.day_clock.talmudicDayMinute * 2)*clock.day_clock.talmudicDayMinute));
+	drawHand(ctx, hour, radius*0.5, radius*0.07);
+	//minute
+	minute = (minute*Math.PI/30)+(second*Math.PI/((clock.day_clock.talmudicDayMinute / 2)*clock.day_clock.talmudicDayMinute));
+	drawHand(ctx, minute, radius*0.8, radius*0.05);
+	// second
+	second = (second*Math.PI/(clock.day_clock.talmudicDayMinute / 2));
+	drawHand(ctx, second, radius*0.9, radius*0.02);
+	console.log(`The angle of hands... Hour: '${hour}', Minute: '${minute}', Second: '${second}'`);
+}
   
 function drawHand(ctx, pos, length, width) {
 	ctx.beginPath();
@@ -574,23 +600,56 @@ function drawHand(ctx, pos, length, width) {
 	ctx.rotate(-pos);
 }
 
+window.addEventListener(
+    'load',
+    function () {
+        var canvas = document.getElementsByTagName('canvas')[0];
+
+        fullscreenify(canvas);
+    },
+    false
+);
+
+function fullscreenify(canvas) {
+    var style = canvas.getAttribute('style') || '';
+    
+    window.addEventListener('resize', function () {resize(canvas);}, false);
+
+    resize(canvas);
+
+    function resize(canvas) {
+        var scale = {x: 1, y: 1};
+        scale.x = (window.innerWidth - 10) / canvas.width/10;
+        scale.y = (window.innerHeight - 10) / canvas.height/10;
+        
+        if (scale.x < 1 || scale.y < 1) {
+            scale = '1, 1';
+        } else if (scale.x < scale.y) {
+            scale = scale.x + ', ' + scale.x;
+        } else {
+            scale = scale.y + ', ' + scale.y;
+        }
+        
+        canvas.setAttribute('style', style + ' ' + '-ms-transform-origin: center top; -webkit-transform-origin: center top; -moz-transform-origin: center top; -o-transform-origin: center top; transform-origin: center top; -ms-transform: scale(' + scale + '); -webkit-transform: scale3d(' + scale + ', 1); -moz-transform: scale(' + scale + '); -o-transform: scale(' + scale + '); transform: scale(' + scale + ');');
+    }
+}
 
 /*Drawing the Digital Clocks Side (DDCS)*/
 // 
 function regular_digital_clock_display() {
-	$('.regular_digital_clock').html(
-		`<p>Regular Time: ${regClockArray}</p>`
+	$('.regularTimeDisplay').html(
+		`${regClockArray}`
 	)
 }
 
 function talmudic_digital_clock_display() {
 	if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
-		$('.talmudic_digital_clock').html(
-			`<p>Talmudic Time: ${dayClockArray}</p>`
+		$('.talmudicTimeDisplay').html(
+			`${dayClockArray}`
 		)
 	} else {
-		$('.talmudic_digital_clock').html(
-			`<p>Talmudic Time: ${nightClockArray}</p>`
+		$('.talmudicTimeDisplay').html(
+			`${nightClockArray}`
 		)
 	}
 
