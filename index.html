@@ -4,22 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="A modern Sun-Dial for Jewish  prayer times.">
     <title>Document</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Spicy+Rice" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <section class="header">
-
-        </section>
-
-        <section class="main_content>
-            <canvas id="canvas" width="400" height="400" style="background-color:white"></canvas>
-        </section>
-        
-        <section class="footer">
-
-        </section>
-    </div>
+    <header>
+        <p class="bsd">BS"D</p>
+        <p class="title">The Talmudic Clock</p>
+    </header>
+    <main class="clocks">
+        <div class="regular_digital_clock">
+            <p>Regular</p>
+            <p>Time</p>
+            <span class="regularTimeDisplay">...</span>
+        </div>
+        <div class="talmudic_digital_clock">
+            <p>Talmudic</p>
+            <p>Time</p>
+            <span class="talmudicTimeDisplay">...</span>
+        </div>
+        <div class="analog_clock">
+                <canvas id="canvas" width="400px" height="400px"></canvas>
+        </div>
+    </main>
+    <footer>
+        <button type="button" class="settings"></button>
+    </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="index.js"></script>
 </body>
 </html>
