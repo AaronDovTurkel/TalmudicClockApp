@@ -13,9 +13,9 @@
 <body>
     <header>
         <p class="bsd">BS"D</p>
-        <p class="title">The Talmudic Clock</p>
+        <h1 class="title">Talmudic Clock App</h1>
     </header>
-    <main class="clocks">
+    <main class="clocks lists">
         <div class="regular_digital_clock">
             <p>Regular</p>
             <p>Time</p>
@@ -27,11 +27,30 @@
             <span class="talmudicTimeDisplay">...</span>
         </div>
         <div class="analog_clock">
-                <canvas id="canvas" width="400px" height="400px"></canvas>
+                <header class="analog_clock_header">Talmudic Clock</header>
+                <canvas id="canvas" width="350px" height="350px"></canvas>
         </div>
+        <div class="settings_container">
+            <span class="settings_header">Settings</span>
+            <ul class="settings-button-list">
+                <li class="info_button">
+                    <button type="button" class="info button"><p>Info</p></button>
+                </li>
+                <li class="list-view_button">
+                    <button type="button" class="list-view button"><p>List-View</p></button>
+                </li>
+                <li class="change-location_button">
+                    <button type="button" class="change-location button"><p>Change Location</p></button>
+                </li>
+                <li class="report-a-problem_button">
+                    <button type="button" class="report-a-problem button"><p>Report a Problem</p></button>
+                </li>
+            </ul>
+        </div>
+        <div class="list_container"></div>
     </main>
     <footer>
-        <button type="button" class="settings"></button>
+        <button type="button" class="settings" alt="settings"></button>
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="index.js"></script>
