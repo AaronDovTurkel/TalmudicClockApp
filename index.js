@@ -349,24 +349,20 @@ function day_night_length_calculator() {
 		clock.night_clock.talmudicNightMinute = ((twelvePartsNight) / 60);
 		if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
 			// After sunrise but before sunset
-			console.log(`348`);
 			clock.day_clock.currentTalmudicSecondFromSunrise = (clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday);
 			clock.night_clock.currentTalmudicSecondFromSunset = 00;
 		} else if ((((clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday)) <= 0) && (((clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday)) <= clock.regularTime.sunriseToday)) {
 			// Before sunrise but after midnight
-			console.log(`353`);
 			clock.day_clock.currentTalmudicSecondFromSunrise = 00;
 			clock.night_clock.currentTalmudicSecondFromSunset = ((86400 - (clock.day_clock.dayLengthInSeconds + clock.regularTime.sunriseToday)) + (clock.regularTime.regDayCurrentInSeconds));
 		} else if ((((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday)) >= (clock.day_clock.dayLengthInSeconds)) && ((clock.regularTime.regDayCurrentInSeconds >= clock.day_clock.dayLengthInSeconds))) {
 			// after sunset but before midnight
-			console.log(`358`);
 			clock.day_clock.currentTalmudicSecondFromSunrise = 00;
 			clock.night_clock.currentTalmudicSecondFromSunset = (clock.regularTime.regDayCurrentInSeconds - (clock.regularTime.sunsetToday + 43200));
 		} else {
 			console.log(`Error: Something went wrong with day_night_length_calculator() on line 232`)
 		}
 		resolve(clock);
-		console.log(clock);
 	});
 }
 
@@ -422,7 +418,6 @@ function day_minute_hour_ticker_checker(clock) {
 		clock.day_clock.seconds = 00;
 		clearInterval(dayTicker);
 		night_ticker_trigger(clock);
-		console.log(clock);
 	};
 }
 
@@ -441,7 +436,6 @@ function night_minute_hour_ticker_checker(clock) {
 		clock.night_clock.seconds = 00;
 		clearInterval(nightTicker);
 		day_ticker_trigger(clock); 
-		console.log(clock);
 	};
 }
 
@@ -466,7 +460,6 @@ function reg_time_pull(utcOffset) {
 	clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
 	clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime);
 	regClockArray = `${padArrayDisplay(clock.regularTime.hours)}${clock.regularTime.hours}:${padArrayDisplay(clock.regularTime.minutes)}${clock.regularTime.minutes}:${padArrayDisplay(clock.regularTime.seconds)}${clock.regularTime.seconds}`;
-	console.log(clock);
 }
 
 
@@ -492,7 +485,6 @@ function time_sync(clock) {
 			clock.night_clock.seconds = extractSecondsFromDecimal(currentTalmudicNightTimeInMinutes);
 		}
 	resolve(clock);
-	console.log(clock);
 	})
 }
 
@@ -511,17 +503,13 @@ function convertTimeToSeconds(time) {
 
 function convertTimeToSecondsUtc(time, utc) {
 	if (typeof time === "string" || time instanceof String) {
-		console.log(`514`);
 		splitAndParseInt(time);
 		info_store.timeInSecondsUtc = (((((info_store.parsedArray[0] - utc) * 60) + (info_store.parsedArray[1])) * 60)  + info_store.parsedArray[2]);
 	} else if (typeof time === "object" || time instanceof Object) {
-		console.log(`518`);
 		info_store.timeInSecondsUtc = (((((time.hours - utc) * 60 ) + (time.minutes)) * 60)  + time.seconds);
 	} else {
-		console.log(`521`);
 		info_store.timeInSecondsUtc = (((((time[0] - utc) * 60) + (time[1])) * 60)  + time[2]);
 	};
-	console.log(info_store.timeInSecondsUtc);
 	return info_store.timeInSecondsUtc;
 }
 
@@ -694,7 +682,6 @@ function submit_location_change() {
 function reportAProblemToggle() {
 	$('.report-a-problem').on( "click",( event => {
 		event.preventDefault();	
-		console.log(`this clicked`);
 		$('.settings_container').css("display", "none");
 		$('footer').css("display", "none");
 		$('.analog_clock').css("display", "none");
@@ -729,7 +716,6 @@ function submit_report_a_problem() {
 function returnToggle(holder) {
 	$('.list_container').on("click", ".return_button",( event => {
 		event.preventDefault();	
-		console.log(`this clicked`);
 		$('.settings_container').css("display", "grid");
 		$('footer').css("display", "block");
 		$('.analog_clock').css("display", "grid");
