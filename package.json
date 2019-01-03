@@ -1,7 +1,7 @@
 {
   "name": "http-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "The Talmudic Clock App",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/AaronDovTurkel/api_hack_capstone_shaos_zmanios.git"
   },
-  "author": "",
+  "author": "TheHolyCoder",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/AaronDovTurkel/api_hack_capstone_shaos_zmanios/issues"
