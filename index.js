@@ -530,6 +530,11 @@ function reg_time_pull(utcOffset) {
 	clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
 	if (utcOffset !== 0) {
 		clock.regularTime.hours = ((regularTimePull.getHours()) + ((utcOffset / 60) / 60) + clock.regularTime.timezoneOffset);
+		if (clock.regularTime.hours < 0) {
+			clock.regularTime.hours = clock.regularTime.hours + 12;
+		} else {
+			clock.regularTime.hours = clock.regularTime.hours;
+		}
 	} else {
 		clock.regularTime.hours = (regularTimePull.getHours());
 	}
@@ -850,6 +855,7 @@ function list_viewToggle() {
 		runAllPrayerCalculatorFunctions();
 		$('.list_container').html(
 			`<ul class="hs">
+				<li><span class="list-view-header">List-View</span></li>
 				<li>Sunrise <span class="item">${prayerTimeStore.sunrise}</span></li>
 				<li>Latest Shema (Gra and Baal HaTanya) <span class="item">${displayPrayerTimes(prayerTimeStore.latest_shema.hours, prayerTimeStore.latest_shema.minutes, prayerTimeStore.latest_shema.seconds)}</span></li>
 				<li>Latest Shacharit (Gra and Baal HaTanya) <span class="item">${displayPrayerTimes(prayerTimeStore.latest_shacharit.hours, prayerTimeStore.latest_shacharit.minutes, prayerTimeStore.latest_shacharit.seconds)}</span></li>
@@ -976,24 +982,24 @@ function infoFloater() {
 		$('.list_container').css("display", "grid");
 		$('.settings').toggleClass("clickToggle");
 		$('.list_container').html(
-			'<div class="info_container">'	+
-				'<h2 class="info_header">Info</h2> ' +
-				'<p class="info_paragraph">The "Talmudic Clock App" is a modern sun-dial designed ' +
+			'<ul class="hs info_paragraph">'	+
+				'<li class="info_header">Info</li> ' +
+				'<li>The "Talmudic Clock App" is a modern sun-dial designed ' +
 				'to quickly view Jewish prayer times. ' +
 				'According to Jewish law the Talmud calculates ' +
 				'the time of day by dividing both the day (sunrise to sunset) and night ' +
 				'(sunset to sunrise) into twelve equal parts. This is known as ' +
-				'"Shaos Zmanios"; which in english means: "hour times". ' +
-				'<br>' +
-				'This app uses mathematical equations and API calls to create ' +
+				'"Shaos Zmanios"; which means "hour times" in english. ' +
+				'</li>' +
+				'<li>This app uses mathematical equations and API calls to create ' +
 				'an engine to calculate and display that "Shaos Zmanious" hour, ' +
 				'or talmudic hour. ' +
-				'<br>' +
-				'Additionally, using that same internal engine, common ' +
+				'</li>' +
+				'<li>Additionally, using that same internal engine, common ' +
 				'prayer times are determined based off the users ' +
 				'current location and displayed ' +
-				'in the "List-View" section located in the settings tab (the gear image).</p>' + 
-			'</div>' +
+				'in the "List-View" section located in the settings tab (the gear image).</li>' + 
+			'</ul>' +
 			'<button type="button" class="info_exit_button"><p>Exit</p></button>'
 		);
 		exitToggle('.list_container');
@@ -1006,24 +1012,24 @@ function initialInfoLoad() {
 	$('.analog_clock').css("display", "none");
 	$('.list_container').css("display", "grid");
 	$('.list_container').html(
-		'<div class="info_container">'	+
-			'<h2 class="info_header">Info</h2> ' +
-			'<p class="info_paragraph">The "Talmudic Clock App" is a modern sun-dial designed ' +
+		'<ul class="hs">'	+
+			'<li class="info_header">Info</li> ' +
+			'<li class="info_paragraph">The "Talmudic Clock App" is a modern sun-dial designed ' +
 			'to quickly view Jewish prayer times. ' +
 			'According to Jewish law the Talmud calculates ' +
 			'the time of day by dividing both the day (sunrise to sunset) and night ' +
 			'(sunset to sunrise) into twelve equal parts. This is known as ' +
-			'"Shaos Zmanios"; which in english means: "hour times". ' +
-			'<br>' +
-			'This app uses mathematical equations and API calls to create ' +
+			'"Shaos Zmanios"; which means "hour times" in english. ' +
+			'</li>' +
+			'<li>This app uses mathematical equations and API calls to create ' +
 			'an engine to calculate and display that "Shaos Zmanious" hour, ' +
 			'or talmudic hour. ' +
-			'<br>' +
-			'Additionally, using that same internal engine, common ' +
+			'</li>' +
+			'<li>Additionally, using that same internal engine, common ' +
 			'prayer times are determined based off the users ' +
 			'current location and displayed ' +
-			'in the "List-View" section located in the settings tab (the gear image).</p>' + 
-		'</div>' +
+			'in the "List-View" section located in the settings tab (the gear image).</li>' + 
+		'</ul>' +
 		'<button type="button" class="info_exit_button"><p>Exit</p></button>'
 	);
 	exitToggle('.list_container');

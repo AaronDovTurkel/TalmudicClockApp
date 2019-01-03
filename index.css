@@ -196,6 +196,12 @@ header {
     justify-self: center;
 }
 
+.list-view-header {
+    color: black;
+    text-decoration: underline;
+    margin-bottom: 15px;
+}
+
 .item {
     color: black;
 }
