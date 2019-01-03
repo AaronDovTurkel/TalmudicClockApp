@@ -58,6 +58,8 @@ function geocodeing_google_fetch(zip_code) {
 	};
 	const queryString = formatQueryParams(params)
 	const url = geocoding_google_api.searchURL + '?' + queryString;
+
+	console.log(url);
   
 	return json_fetcher(url);
 }
@@ -71,7 +73,6 @@ function changed_location_time_fetch(lat_lng) {
 	const queryString = formatQueryParams(params)
 	const url = utc_offset_google_api.searchURL + '?' + queryString;
 
-	console.log(url);
   
 	return json_fetcher(url);
 }
@@ -801,6 +802,10 @@ function armyTimeConverter(hour) {
 
 /*Display and Trigger Functions*/
 //
+function locationDisplay(lat_lng) {
+	$('.location_display').html(`(${lat_lng.results[0].formatted_address})`);
+}
+
 function settingsButton() {
 	$('.settings').on( "click",( event => {
 		event.preventDefault();	
@@ -871,21 +876,30 @@ function submit_location_change() {
 		event.preventDefault();	
 		zip_code = $('#zip_code').val();
 		let isValid = /^[0-9]{5}(?:-[0-9]{4})?$/.test(zip_code);
-		if (isValid) {
-			console.log(`Valid Zip Code`);
-			changed_location_time_pull(zip_code);
-			$('.settings_container').css("display", "grid");
-			$('footer').css("display", "block");
-			$('.analog_clock').css("display", "grid");
-			$('.list_container').css("display", "none");
-		} else {
-			console.log(`Invalid Zip Code`);
-			alert(`Invalid Zip Code. Please try Again.`);
-			$('.settings_container').css("display", "grid");
-			$('footer').css("display", "block");
-			$('.analog_clock').css("display", "grid");
-			$('.list_container').css("display", "none");
-		};
+		geocodeing_google_fetch(zip_code)
+				.then(lat_lng => {
+					locationDisplay(lat_lng);
+					if (isValid) {
+						console.log(`Valid Zip Code`);
+						changed_location_time_pull(zip_code);
+						$('.settings_container').css("display", "grid");
+						$('footer').css("display", "block");
+						$('.analog_clock').css("display", "grid");
+						$('.list_container').css("display", "none");
+						
+					} else {
+						console.log(`Invalid Zip Code`);
+						alert(`Invalid Zip Code. Please try Again.`);
+						$('.settings_container').css("display", "grid");
+						$('footer').css("display", "block");
+						$('.analog_clock').css("display", "grid");
+						$('.list_container').css("display", "none");
+					};
+				})
+				.catch(err => {
+					alert(`Something went wrong: ${err.message}`);
+					return});
+
 	}));
 }
 

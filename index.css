@@ -123,6 +123,10 @@ header {
     letter-spacing: .08em;
 }
 
+.location_display {
+    font-size: 1em;
+}
+
 .info_exit_button {
     grid-row: 2 / 3;
     align-self: end;
