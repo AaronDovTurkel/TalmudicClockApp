@@ -179,6 +179,9 @@ function initial_pull_and_new_day_toggle() {
 					after_sunrise_promise()
 				}
 			})
+			.catch(err => {
+				$('#js-error-message').text(`Something went wrong: ${err.message}`);
+			});
 		resolve();
 	})
 };
@@ -207,8 +210,14 @@ function changed_location_time_pull(zip_code) {
 					new_day = true;
 					after_sunrise_promise_alt()
 				}
+			})
+			.catch(err => {
+				$('#js-error-message').text(`Something went wrong: ${err.message}`);
 			});
 		})
+		.catch(err => {
+			$('#js-error-message').text(`Something went wrong: ${err.message}`);
+		});
 }
 
 
@@ -233,6 +242,9 @@ function before_sunrise_promise() {
 				drawClock();
 			}
 		})
+		.catch(err => {
+			$('#js-error-message').text(`Something went wrong: ${err.message}`);
+		});
 };
 
 function after_sunrise_promise() {
@@ -269,6 +281,9 @@ function before_sunrise_promise_alt() {
 				drawClock();
 			}
 		})
+		.catch(err => {
+			$('#js-error-message').text(`Something went wrong: ${err.message}`);
+		});
 };
 
 function after_sunrise_promise_alt() {
@@ -287,12 +302,15 @@ function after_sunrise_promise_alt() {
 				drawClock();
 			}
 		})
+		.catch(err => {
+			$('#js-error-message').text(`Something went wrong: ${err.message}`);
+		});
 };
 
 
 /*The Math Behind the Talmudic Clock Side (TMBTCS)*/
 
-//A. Create clock variables for day and night clocks, respectively.//
+//Storage//
 let clock =
 	{
 		day_clock:
@@ -326,6 +344,67 @@ let clock =
 			}
 	}
 
+let prayerTimeStore = 
+	{
+		sunrise: 00,
+		latest_shema: 
+			{
+				hours: 00,
+				minutes: 00,
+				seconds: 00
+			},
+		latest_shacharit: 
+			{
+				hours: 00,
+				minutes: 00,
+				seconds: 00
+			},
+		midday: 
+			{
+				hours: 00,
+				minutes: 00,
+				seconds: 00
+			},
+		earliest_minchah:
+			{
+				hours: 00,
+				minutes: 00,
+				seconds: 00
+			},
+		minchah_ketanah:
+			{
+				hours: 00,
+				minutes: 00,
+				seconds: 00
+			},
+		plag_haminchah:
+			{
+				hours: 00,
+				minutes: 00,
+				seconds: 00
+			},
+		sunset: 00,
+		nightfall_threeStars:
+			{
+				hours: 00,
+				minutes: 00,
+				seconds: 00
+			},
+		nightfall_seventyTwoMinutes:
+			{
+				hours: 00,
+				minutes: 00,
+				seconds: 00
+			}
+	}
+
+let info_store = 
+	{
+		timeInSeconds: '',
+		timeInSecondsUtc: '',
+		parsedArray: '',
+		minuteConversion: 0
+	}
 
 
 //B. Calculate day length and night length in seconds from "The API Side- Basic".//
@@ -488,6 +567,127 @@ function time_sync(clock) {
 	})
 }
 
+//PrayerTimeStore Functions//
+function prayer_sunrise_calcultor() {
+	splitAndParseInt(api_results.results.sunrise);
+	pmSunriseConverter(api_results.results.sunrise);
+	if (utcOffset !== 0) {
+		prayerTimeStore.sunrise = `${padArrayDisplay((armyTimeConverter(info_store.parsedArray[0] - (Math.abs(((utcOffset / 60) / 60))))))}${armyTimeConverter((info_store.parsedArray[0] - (Math.abs(((utcOffset / 60) / 60)))))}:${padArrayDisplay((info_store.parsedArray[1]))}${(info_store.parsedArray[1])}:${padArrayDisplay((info_store.parsedArray[2]))}${(info_store.parsedArray[2])}`;
+	} else {
+		prayerTimeStore.sunrise = `${padArrayDisplay((armyTimeConverter(info_store.parsedArray[0] - clock.regularTime.timezoneOffset)))}${armyTimeConverter((info_store.parsedArray[0] - clock.regularTime.timezoneOffset))}:${padArrayDisplay((info_store.parsedArray[1]))}${(info_store.parsedArray[1])}:${padArrayDisplay((info_store.parsedArray[2]))}${(info_store.parsedArray[2])}`;
+	}
+	return prayerTimeStore.sunrise;
+}
+
+function prayer_sunset_calcultor() {
+	splitAndParseInt(api_results.results.sunset);
+	amSunsetConverter(api_results.results.sunset);
+	if (utcOffset !== 0) {
+		prayerTimeStore.sunset = `${padArrayDisplay((armyTimeConverter(info_store.parsedArray[0] - (Math.abs(((utcOffset / 60) / 60))))))}${armyTimeConverter((info_store.parsedArray[0] - (Math.abs(((utcOffset / 60) / 60)))))}:${padArrayDisplay((info_store.parsedArray[1]))}${(info_store.parsedArray[1])}:${padArrayDisplay((info_store.parsedArray[2]))}${(info_store.parsedArray[2])}`;
+	} else {
+		prayerTimeStore.sunset = `${padArrayDisplay((armyTimeConverter(info_store.parsedArray[0] - clock.regularTime.timezoneOffset)))}${armyTimeConverter((info_store.parsedArray[0] - clock.regularTime.timezoneOffset))}:${padArrayDisplay((info_store.parsedArray[1]))}${(info_store.parsedArray[1])}:${padArrayDisplay((info_store.parsedArray[2]))}${(info_store.parsedArray[2])}`;
+	}
+	return prayerTimeStore.sunset;
+}
+
+function prayer_latest_shema_calculator() {
+	let currentLatestShema= ((((clock.day_clock.dayLengthInSeconds / 12) * 3) + clock.regularTime.sunriseToday));
+	let currentLatestShemaInMinutes = currentLatestShema / 60;
+	let currentLatestShemaHour = (currentLatestShemaInMinutes / 60);
+	prayerTimeStore.latest_shema.hours = Math.trunc(currentLatestShemaHour);
+	prayerTimeStore.latest_shema.minutes = extractMinutesFromDecimal(currentLatestShemaHour);
+	prayerTimeStore.latest_shema.seconds = extractSecondsFromDecimal(currentLatestShemaInMinutes);
+	return prayerTimeStore.latest_shema;
+}
+
+function prayer_latest_shacharit_calculator() {
+	let currentLatestShacharit= ((((clock.day_clock.dayLengthInSeconds / 12) * 4) + clock.regularTime.sunriseToday));
+	let currentLatestShacharitInMinutes = currentLatestShacharit / 60;
+	let currentLatestShacharitHour = (currentLatestShacharitInMinutes / 60);
+	prayerTimeStore.latest_shacharit.hours = Math.trunc(currentLatestShacharitHour);
+	prayerTimeStore.latest_shacharit.minutes = extractMinutesFromDecimal(currentLatestShacharitHour);
+	prayerTimeStore.latest_shacharit.seconds = extractSecondsFromDecimal(currentLatestShacharitInMinutes);
+	return prayerTimeStore.latest_shacharit;
+}
+
+function prayer_midday_calculator() {
+	let currentMidday= ((((clock.day_clock.dayLengthInSeconds / 12) * 6) + clock.regularTime.sunriseToday));
+	let currentMiddayInMinutes = currentMidday/ 60;
+	let currentMiddayHour = (currentMiddayInMinutes / 60);
+	prayerTimeStore.midday.hours = Math.trunc(currentMiddayHour);
+	prayerTimeStore.midday.minutes = extractMinutesFromDecimal(currentMiddayHour);
+	prayerTimeStore.midday.seconds = extractSecondsFromDecimal(currentMiddayInMinutes);
+	return prayerTimeStore.midday;
+}
+
+function prayer_earliest_minchah_calculator() {
+	let currentEarliestMinchah= (((((clock.day_clock.dayLengthInSeconds / 12) * 6) + clock.regularTime.sunriseToday)) + 1800);
+	let currentEarliestMinchahInMinutes = currentEarliestMinchah/ 60;
+	let currentEarliestMinchahHour = (currentEarliestMinchahInMinutes / 60);
+	prayerTimeStore.earliest_minchah.hours = Math.trunc(currentEarliestMinchahHour);
+	prayerTimeStore.earliest_minchah.minutes = extractMinutesFromDecimal(currentEarliestMinchahHour);
+	prayerTimeStore.earliest_minchah.seconds = extractSecondsFromDecimal(currentEarliestMinchahInMinutes);
+	return prayerTimeStore.earliest_minchah;
+}
+
+function prayer_minchah_ketanah_calculator() {
+	let currentMinchahKetanah= ((((clock.day_clock.dayLengthInSeconds / 12) * 9.5) + clock.regularTime.sunriseToday));
+	let currentMinchahKetanahInMinutes = currentMinchahKetanah / 60;
+	let currentMinchahKetanahHour = (currentMinchahKetanahInMinutes / 60);
+	prayerTimeStore.minchah_ketanah.hours = Math.trunc(currentMinchahKetanahHour);
+	prayerTimeStore.minchah_ketanah.minutes = extractMinutesFromDecimal(currentMinchahKetanahHour);
+	prayerTimeStore.minchah_ketanah.seconds = extractSecondsFromDecimal(currentMinchahKetanahInMinutes);
+	return prayerTimeStore.minchah_ketanah;
+}
+
+function prayer_plag_haminchah_calculator() {
+	let currentPlagHaminchah= ((((clock.day_clock.dayLengthInSeconds / 12) * 10.75) + clock.regularTime.sunriseToday));
+	let currentPlagHaminchahInMinutes = currentPlagHaminchah / 60;
+	let currentPlagHaminchahHour = (currentPlagHaminchahInMinutes / 60);
+	prayerTimeStore.plag_haminchah.hours = Math.trunc(currentPlagHaminchahHour);
+	prayerTimeStore.plag_haminchah.minutes = extractMinutesFromDecimal(currentPlagHaminchahHour);
+	prayerTimeStore.plag_haminchah.seconds = extractSecondsFromDecimal(currentPlagHaminchahInMinutes);
+	return prayerTimeStore.plag_haminchah;
+}
+
+function prayer_nightfall_threeStars_calculator() {
+	let currentNightfallThreeStars= (clock.regularTime.sunsetToday + 3000);
+	let currentNightfallThreeStarsInMinutes = currentNightfallThreeStars/ 60;
+	let currentNightfallThreeStarsHour = (currentNightfallThreeStarsInMinutes / 60);
+	prayerTimeStore.nightfall_threeStars.hours = Math.trunc(currentNightfallThreeStarsHour);
+	prayerTimeStore.nightfall_threeStars.minutes = extractMinutesFromDecimal(currentNightfallThreeStarsHour);
+	prayerTimeStore.nightfall_threeStars.seconds = extractSecondsFromDecimal(currentNightfallThreeStarsInMinutes);
+	return prayerTimeStore.nightfall_threeStars;
+}
+
+function prayer_nightfall_seventyTwoMinutes_calculator() {
+	let currentNightfallSeventyTwoMinutes = (clock.regularTime.sunsetToday + 4320);
+	let currentNightfallSeventyTwoMinutesInMinutes = currentNightfallSeventyTwoMinutes/ 60;
+	let currentNightfallSeventyTwoMinutesHour = (currentNightfallSeventyTwoMinutesInMinutes / 60);
+	prayerTimeStore.nightfall_seventyTwoMinutes.hours = Math.trunc(currentNightfallSeventyTwoMinutesHour);
+	prayerTimeStore.nightfall_seventyTwoMinutes.minutes = extractMinutesFromDecimal(currentNightfallSeventyTwoMinutesHour);
+	prayerTimeStore.nightfall_seventyTwoMinutes.seconds = extractSecondsFromDecimal(currentNightfallSeventyTwoMinutesInMinutes);
+	return prayerTimeStore.nightfall_seventyTwoMinutes;
+}
+
+function runAllPrayerCalculatorFunctions() {
+	prayer_sunrise_calcultor();
+	prayer_sunset_calcultor();
+	prayer_latest_shema_calculator();
+	prayer_latest_shacharit_calculator();
+	prayer_midday_calculator();
+	prayer_earliest_minchah_calculator();
+	prayer_minchah_ketanah_calculator();
+	prayer_plag_haminchah_calculator();
+	prayer_nightfall_threeStars_calculator();
+	prayer_nightfall_seventyTwoMinutes_calculator();
+}
+
+//Display Prayer Times Functions//
+function displayPrayerTimes(hours, minutes, seconds) {
+	return `${padArrayDisplay((armyTimeConverter(hours)))}${armyTimeConverter(hours)}:${padArrayDisplay(minutes)}${minutes}:${padArrayDisplay(seconds)}${seconds}`;
+}
+
 //Simplifying Functions//
 function convertTimeToSeconds(time) {
 	if (typeof time === "string" || time instanceof String) {
@@ -504,6 +704,7 @@ function convertTimeToSeconds(time) {
 function convertTimeToSecondsUtc(time, utc) {
 	if (typeof time === "string" || time instanceof String) {
 		splitAndParseInt(time);
+		pmSunriseConverter(time);
 		info_store.timeInSecondsUtc = (((((info_store.parsedArray[0] - utc) * 60) + (info_store.parsedArray[1])) * 60)  + info_store.parsedArray[2]);
 	} else if (typeof time === "object" || time instanceof Object) {
 		info_store.timeInSecondsUtc = (((((time.hours - utc) * 60 ) + (time.minutes)) * 60)  + time.seconds);
@@ -515,6 +716,28 @@ function convertTimeToSecondsUtc(time, utc) {
 
 function splitAndParseInt(time) {
 	info_store.parsedArray = [(parseInt((time.split(":"))[0])), (parseInt((time.split(":"))[1])), (parseInt((time.split(":"))[2]))];
+}
+
+function pmSunriseConverter(time) {
+	pmOrAm = (time).split(" ");
+	splitAndParseInt(time);
+	if ((pmOrAm[1] === "PM") && (info_store.parsedArray[0] !== 12)) {
+		info_store.parsedArray[0] = info_store.parsedArray[0] + 12;
+		return info_store.parsedArray[0]
+	} else {
+		return info_store.parsedArray[0]
+	}
+}
+
+function amSunsetConverter(time) {
+	pmOrAm = (time).split(" ");
+	splitAndParseInt(time);
+	if ((pmOrAm[1] === "AM") && (info_store.parsedArray[0] !== 12)) {
+		info_store.parsedArray[0] = info_store.parsedArray[0] + 12;
+		return info_store.parsedArray[0]
+	} else {
+		return info_store.parsedArray[0]
+	}
 }
 
 function spliceDecimalPoint(int) {
@@ -595,17 +818,9 @@ function padArrayDisplay(int) {
 function armyTimeConverter(hour) {
 	if (hour > 12) {
 		return hour - 12;
+	} else {
+		return hour
 	}
-}
-
-
-/*Extra Store*/
-//
-let info_store = {
-	timeInSeconds: '',
-	timeInSecondsUtc: '',
-	parsedArray: '',
-	minuteConversion: 0
 }
 
 
@@ -632,20 +847,21 @@ function list_viewToggle() {
 		$('footer').css("display", "none");
 		$('.analog_clock').css("display", "none");
 		$('.list_container').css("display", "grid");
+		runAllPrayerCalculatorFunctions();
 		$('.list_container').html(
 			`<ul class="hs">
-				<li class="item">Sunrise:</li>
-				<li class="item">Latest Shema (Gra and Baal HaTanya):</li>
-				<li class="item">Latest Shacharit (Gra and Baal HaTanya):</li>
-				<li class="item">Midday:</li>
-				<li class="item">Earliest Minchah:</li>
-				<li class="item">Minchah Ketanah:</li>
-				<li class="item">Plag Haminchah:</li>
-				<li class="item">Sunset:</li>
-				<li class="item">Nightfall (3 stars):</li>
-				<li class="item">Nightfall (72 minutes):</li>
+				<li>Sunrise <span class="item">${prayerTimeStore.sunrise}</span></li>
+				<li>Latest Shema (Gra and Baal HaTanya) <span class="item">${displayPrayerTimes(prayerTimeStore.latest_shema.hours, prayerTimeStore.latest_shema.minutes, prayerTimeStore.latest_shema.seconds)}</span></li>
+				<li>Latest Shacharit (Gra and Baal HaTanya) <span class="item">${displayPrayerTimes(prayerTimeStore.latest_shacharit.hours, prayerTimeStore.latest_shacharit.minutes, prayerTimeStore.latest_shacharit.seconds)}</span></li>
+				<li>Midday <span class="item">${displayPrayerTimes(prayerTimeStore.midday.hours, prayerTimeStore.midday.minutes, prayerTimeStore.midday.seconds)}</span></li>
+				<li>Earliest Minchah <span class="item">${displayPrayerTimes(prayerTimeStore.earliest_minchah.hours, prayerTimeStore.earliest_minchah.minutes, prayerTimeStore.earliest_minchah.seconds)}</span></li>
+				<li>Minchah Ketanah <span class="item">${displayPrayerTimes(prayerTimeStore.minchah_ketanah.hours, prayerTimeStore.minchah_ketanah.minutes, prayerTimeStore.minchah_ketanah.seconds)}</span></li>
+				<li>Plag Haminchah <span class="item">${displayPrayerTimes(prayerTimeStore.plag_haminchah.hours, prayerTimeStore.plag_haminchah.minutes, prayerTimeStore.plag_haminchah.seconds)}</span></li>
+				<li>Sunset <span class="item">${prayerTimeStore.sunset}</span></li>
+				<li>Nightfall (3 stars) <span class="item">${displayPrayerTimes(prayerTimeStore.nightfall_threeStars.hours, prayerTimeStore.nightfall_threeStars.minutes, prayerTimeStore.nightfall_threeStars.seconds)}</span></li>
+				<li>Nightfall (72 minutes) <span class="item">${displayPrayerTimes(prayerTimeStore.nightfall_seventyTwoMinutes.hours, prayerTimeStore.nightfall_seventyTwoMinutes.minutes, prayerTimeStore.nightfall_seventyTwoMinutes.seconds)}</span></li>
 			</ul>
-			<button type="button" role="button" class="return_button"><p>Return</p></button>`
+			<button type="button" class="return_button"><p>Return</p></button>`
 		);
 		returnToggle('.list_container');
 	}));
@@ -666,7 +882,7 @@ function changeLocationToggle() {
 				<br>
 				<input class="change_location_submit_button" type="submit" value="Submit">
 			</form>
-			<button type="button" role="button" class="return_button"><p>Return</p></button>`
+			<button type="button" class="return_button"><p>Return</p></button>`
 		);
 		returnToggle('.list_container');
 		submit_location_change();
@@ -674,14 +890,26 @@ function changeLocationToggle() {
 }
 
 function submit_location_change() {
+	isValidZip = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/
 	$('.change_location_form').on( "submit",( event => {
 		event.preventDefault();	
 		zip_code = $('#zip_code').val();
-		changed_location_time_pull(zip_code);
-		$('.settings_container').css("display", "grid");
-		$('footer').css("display", "block");
-		$('.analog_clock').css("display", "grid");
-		$('.list_container').css("display", "none");
+		let isValid = /^[0-9]{5}(?:-[0-9]{4})?$/.test(zip_code);
+		if (isValid) {
+			console.log(`Valid Zip Code`);
+			changed_location_time_pull(zip_code);
+			$('.settings_container').css("display", "grid");
+			$('footer').css("display", "block");
+			$('.analog_clock').css("display", "grid");
+			$('.list_container').css("display", "none");
+		} else {
+			console.log(`Invalid Zip Code`);
+			alert(`Invalid Zip Code. Please try Again.`);
+			$('.settings_container').css("display", "grid");
+			$('footer').css("display", "block");
+			$('.analog_clock').css("display", "grid");
+			$('.list_container').css("display", "none");
+		};
 	}));
 }
 
@@ -700,7 +928,7 @@ function reportAProblemToggle() {
 				<br>
 				<input class="report_a_problem_submit" type="submit" value="Submit">
 			</form>
-			<button type="button" role="button" class="return_button"><p>Return</p></button>`
+			<button type="button" class="return_button"><p>Return</p></button>`
 		);
 		returnToggle('.list_container');
 		submit_report_a_problem()
@@ -754,17 +982,19 @@ function infoFloater() {
 				'to quickly view Jewish prayer times. ' +
 				'According to Jewish law the Talmud calculates ' +
 				'the time of day by dividing both the day (sunrise to sunset) and night ' +
-				'(sunset to sunrise) into twelve equal parts. This is known as' +
+				'(sunset to sunrise) into twelve equal parts. This is known as ' +
 				'"Shaos Zmanios"; which in english means: "hour times". ' +
+				'<br>' +
 				'This app uses mathematical equations and API calls to create ' +
 				'an engine to calculate and display that "Shaos Zmanious" hour, ' +
 				'or talmudic hour. ' +
+				'<br>' +
 				'Additionally, using that same internal engine, common ' +
 				'prayer times are determined based off the users ' +
 				'current location and displayed ' +
 				'in the "List-View" section located in the settings tab (the gear image).</p>' + 
 			'</div>' +
-			'<button type="button" role="button" class="info_exit_button"><p>X</p></button>'
+			'<button type="button" class="info_exit_button"><p>Exit</p></button>'
 		);
 		exitToggle('.list_container');
 	}));
@@ -782,17 +1012,19 @@ function initialInfoLoad() {
 			'to quickly view Jewish prayer times. ' +
 			'According to Jewish law the Talmud calculates ' +
 			'the time of day by dividing both the day (sunrise to sunset) and night ' +
-			'(sunset to sunrise) into twelve equal parts. This is known as' +
+			'(sunset to sunrise) into twelve equal parts. This is known as ' +
 			'"Shaos Zmanios"; which in english means: "hour times". ' +
+			'<br>' +
 			'This app uses mathematical equations and API calls to create ' +
 			'an engine to calculate and display that "Shaos Zmanious" hour, ' +
 			'or talmudic hour. ' +
+			'<br>' +
 			'Additionally, using that same internal engine, common ' +
 			'prayer times are determined based off the users ' +
 			'current location and displayed ' +
 			'in the "List-View" section located in the settings tab (the gear image).</p>' + 
 		'</div>' +
-		'<button type="button" class="info_exit_button"><p>X</p></button>'
+		'<button type="button" class="info_exit_button"><p>Exit</p></button>'
 	);
 	exitToggle('.list_container');
 }

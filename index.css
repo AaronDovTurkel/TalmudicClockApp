@@ -111,12 +111,16 @@ header {
     width: 75vw;
     height: 50vh;
     overflow: auto;
-    font-family: 'Open Sans', sans-serif;
+    letter-spacing: 1em;
 }
 
 .info_header {
     text-align: center;
     text-decoration: underline;
+}
+
+.info_paragraph {
+    letter-spacing: .08em;
 }
 
 .info_exit_button {
@@ -190,6 +194,10 @@ header {
     grid-row: 2 / 3;
     align-self: stretch;
     justify-self: center;
+}
+
+.item {
+    color: black;
 }
 
 .change-location_button {
