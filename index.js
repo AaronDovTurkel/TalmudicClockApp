@@ -1,13 +1,6 @@
-//'use strict';
-
-/*Pseudo Coded*/
-
-
 /*The API Side - Basic*/
 
-//API Info Objects// --> 'A'
-// Object that will contain all the necessary info
-// for API calls. (keys, url's, etc.).
+//API Info Objects//
 const ip_loc_api_data = {
 	apiKey: '04160a00359cbf', 
 	searchURL: 'https://ipinfo.io/json',
@@ -27,8 +20,7 @@ const utc_offset_google_api = {
 	searchURL: 'https://maps.googleapis.com/maps/api/timezone/json'
 }
 
-//Resuable FETCH function and Json conversion// --> 'B'
-// A reusable function to call an API and convert the response to JSON.
+//Resuable FETCH function and Json conversion//
 function json_fetcher(url) {
   return fetch(url)
     .then(response => {
@@ -41,22 +33,14 @@ function json_fetcher(url) {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
 }
-//Reusable format query parameters function// --> 'C'
-// A reusable function that will format query params in a suitable manner
-// for API fetch calls. (use boiler plate).
+//Reusable format query parameters function//
 function formatQueryParams(params) {
   const queryItems = Object.keys(params)
     .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
   return queryItems.join('&');
 };
 
-//Initial IP Geolocator API Fetch// --> 'D'
-// 1. Three 'const' that will store:
-//     a. const w/ params needed - 'A'
-//     b. querystring const that calls function above - 'B'.
-//     c. url const that concatenates the query and url for API
-// 2. Fetch to 'https://ipinfo.io/json' which will return json object 
-// (using the function above) with location info.
+//Initial API Fetches//
 function ip_geolocator_fetch() {
   const params = {
     token: ip_loc_api_data.apiKey
@@ -93,13 +77,7 @@ function changed_location_time_fetch(lat_lng) {
 }
 
 
-//Initial Sunset and Sunrise API Fetch// --> 'E'
-// 1. Three 'const' that will store:
-//     a. const w/ params needed - 'A'.
-//     b. querystring const that calls function above - 'B'.
-//     c. url const that concatenates the query and url for API
-// 2. Fetch to 'https://api.sunrise-sunset.org/json' which will return json object 
-// (using the function above) with location info.
+//Further API Fetch//
 function sun_rise_set_fetch(lat_lng) {
   const params = {
     lat: lat_lng.loc.split(",")[0],
@@ -222,10 +200,7 @@ function changed_location_time_pull(zip_code) {
 
 
 
-//Come Together Function//
-// 1. Call 'D'
-// 2. .then Call 'E' (w/ response from 'D')
-// 3. function that creates variable that stores the results...
+//Final API Fetches//
 function before_sunrise_promise() {
 	ip_geolocator_fetch()
 		.then(lat_lng => sun_rise_set_fetch_alt(lat_lng))
@@ -407,7 +382,7 @@ let info_store =
 	}
 
 
-//B. Calculate day length and night length in seconds from "The API Side- Basic".//
+//Calculate day length and night length in seconds from "The API Side- Basic".//
 function day_night_length_calculator() {
 	return new Promise (function(resolve, reject) {
 		if (utcOffset !== 0) {
@@ -446,10 +421,7 @@ function day_night_length_calculator() {
 }
 
 
-//C. Create function that uses the above second calculation that will make a 
-// minute ticker (timeout) for day and night.//
-//D. Create function that will use minute ticker (timeout) and increment the 
-// clock variables.//
+//Minute ticker (timeout) for day and night.//
 let dayTicker = '';
 let nightTicker = '';
 
@@ -482,6 +454,7 @@ function night_ticker_trigger(clock) {
 	nightTicker;
 }
 
+//Function that uses minute ticker (timeout) and increments the clock variables.//
 function day_minute_hour_ticker_checker(clock) {
 	if (clock.day_clock.seconds >= (clock.day_clock.talmudicDayMinute - 1)) {
 		clock.day_clock.minutes = clock.day_clock.minutes + 1;
@@ -518,10 +491,7 @@ function night_minute_hour_ticker_checker(clock) {
 	};
 }
 
-//E. Create function that will take current day time from location 
-// (possibly retrived from ip-loc function above) and calculate what time of day 
-// (or night) the talmudic time is currently up to and set the clock varaibles with
-// that info as its base time. (should load on start of page and reload button).//
+//Function that takes current day time from location and syncs time..//
 let regClockArray = '';
 let utcOffset = 0;
 
@@ -829,7 +799,7 @@ function armyTimeConverter(hour) {
 }
 
 
-/*Other Functions to be inserted above*/
+/*Display and Trigger Functions*/
 //
 function settingsButton() {
 	$('.settings').on( "click",( event => {
@@ -1154,7 +1124,7 @@ function drawHand(ctx, pos, length, width) {
 }
 
 
-/*Drawing the Digital Clocks Side (DDCS)*/
+/*Displaying the Digital Clocks Side (DDCS)*/
 // 
 function regular_digital_clock_display() {
 	$('.regularTimeDisplay').html(
