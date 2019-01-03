@@ -17,6 +17,16 @@ const sun_rise_set_api_data = {
 	searchURL: 'https://api.sunrise-sunset.org/json',
 };
 
+const geocoding_google_api = {
+	apiKey: 'AIzaSyCfYCurA2DoL9SIN0MmIiZWcIG1RP0LRx4', 
+	searchURL: 'https://maps.googleapis.com/maps/api/geocode/json',
+}
+
+const utc_offset_google_api = {
+	apiKey: 'AIzaSyCfYCurA2DoL9SIN0MmIiZWcIG1RP0LRx4',
+	searchURL: 'https://maps.googleapis.com/maps/api/timezone/json'
+}
+
 //Resuable FETCH function and Json conversion// --> 'B'
 // A reusable function to call an API and convert the response to JSON.
 function json_fetcher(url) {
@@ -57,6 +67,32 @@ function ip_geolocator_fetch() {
   return json_fetcher(url);
 }
 
+function geocodeing_google_fetch(zip_code) {
+	const params = {
+		address: zip_code,
+		key: geocoding_google_api.apiKey
+	};
+	const queryString = formatQueryParams(params)
+	const url = geocoding_google_api.searchURL + '?' + queryString;
+  
+	return json_fetcher(url);
+}
+
+function changed_location_time_fetch(lat_lng) {
+	const params = {
+		location: lat_lng.results[0].geometry.location.lat + ',' + lat_lng.results[0].geometry.location.lng,
+		timestamp: Math.floor(Date.now() / 1000),
+		key: utc_offset_google_api.apiKey,
+	};
+	const queryString = formatQueryParams(params)
+	const url = utc_offset_google_api.searchURL + '?' + queryString;
+
+	console.log(url);
+  
+	return json_fetcher(url);
+}
+
+
 //Initial Sunset and Sunrise API Fetch// --> 'E'
 // 1. Three 'const' that will store:
 //     a. const w/ params needed - 'A'.
@@ -89,6 +125,31 @@ function sun_rise_set_fetch_alt(lat_lng) {
   return json_fetcher(url);
 }
 
+function sun_rise_set_fetch_changed_location(lat_lng) {
+	const params = {
+	  lat: lat_lng.results[0].geometry.location.lat,
+	  lng: lat_lng.results[0].geometry.location.lng
+	};
+  
+	const queryString = formatQueryParams(params)
+	const url = sun_rise_set_api_data.searchURL + '?' + queryString;
+  
+	return json_fetcher(url);
+}
+
+function sun_rise_set_fetch_changed_location_alt(lat_lng) {
+	const params = {
+		lat: lat_lng.results[0].geometry.location.lat,
+		lng: lat_lng.results[0].geometry.location.lng,
+		date: 'yesterday'
+	};
+  
+	const queryString = formatQueryParams(params)
+	const url = sun_rise_set_api_data.searchURL + '?' + queryString;
+  
+	return json_fetcher(url);
+  }
+
 //Variable creator function for fetch results//
 let api_results = '0'; 
 
@@ -101,22 +162,19 @@ function fetch_results_store(results) {
 
 let new_day = true;
 
-function new_day_toggle() {
+function initial_pull_and_new_day_toggle() {
 	return new Promise (function(resolve, reject) {
 		ip_geolocator_fetch()
 			.then(lat_lng => sun_rise_set_fetch(lat_lng))
-			.then(results => fetch_results_store(results)) // Do I need this???
+			.then(results => fetch_results_store(results))
 			.then(results => {
-				console.log(`this worked on 110`);
 				convertTimeToSecondsUtc(api_results.results.sunrise, clock.regularTime.timezoneOffset);
 				if (
 					info_store.timeInSecondsUtc >= clock.regularTime.regDayCurrentInSeconds
 				) {
-					console.log(`this 'if' worked on 115`);
 					new_day = false;
 					before_sunrise_promise()
 				} else {
-					console.log(`this 'else' worked on 119`);
 					new_day = true;
 					after_sunrise_promise()
 				}
@@ -124,7 +182,37 @@ function new_day_toggle() {
 		resolve();
 	})
 };
-	
+
+function changed_location_time_pull(zip_code) {
+	clearInterval(dayTicker);
+	clearInterval(nightTicker);
+	geocodeing_google_fetch(zip_code)
+		.then(lat_lng => changed_location_time_fetch(lat_lng))
+		.then(results => {
+			utcOffset = results.rawOffset;
+			reg_time_pull(utcOffset);
+		})
+		.then(() => {
+			geocodeing_google_fetch(zip_code)
+			.then(lat_lng => sun_rise_set_fetch_changed_location(lat_lng))
+			.then(results => fetch_results_store(results))
+			.then(results => {
+				convertTimeToSecondsUtc(api_results.results.sunrise, clock.regularTime.timezoneOffset);
+				if (
+					info_store.timeInSecondsUtc >= clock.regularTime.regDayCurrentInSeconds
+				) {
+					new_day = false;
+					before_sunrise_promise_alt()
+				} else {
+					new_day = true;
+					after_sunrise_promise_alt()
+				}
+			});
+		})
+}
+
+
+
 //Come Together Function//
 // 1. Call 'D'
 // 2. .then Call 'E' (w/ response from 'D')
@@ -138,11 +226,9 @@ function before_sunrise_promise() {
 			convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
 			time_sync(clock);
 			if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
-				console.log(`this 'if' is being called on 141`);
 				day_ticker_trigger(clock);
 				drawClock();
 			} else {
-				console.log(`this 'else' is being called on 145`);
 				night_ticker_trigger(clock);
 				drawClock();
 			}
@@ -158,11 +244,45 @@ function after_sunrise_promise() {
 			convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
 			time_sync(clock);
 			if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
-				console.log(`this 'if' is being called on 157`);
 				day_ticker_trigger(clock);
 				drawClock();
 			} else {
-				console.log(`this 'else' is being called on 160`);
+				night_ticker_trigger(clock);
+				drawClock();
+			}
+		})
+};
+
+function before_sunrise_promise_alt() {
+	geocodeing_google_fetch(zip_code)
+		.then(lat_lng => sun_rise_set_fetch_changed_location_alt(lat_lng))
+		.then(results => fetch_results_store(results))
+		.then(results => day_night_length_calculator(results))
+		.then(clock => {
+			convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
+			time_sync(clock);
+			if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
+				day_ticker_trigger(clock);
+				drawClock();
+			} else {
+				night_ticker_trigger(clock);
+				drawClock();
+			}
+		})
+};
+
+function after_sunrise_promise_alt() {
+	geocodeing_google_fetch(zip_code)
+		.then(lat_lng => sun_rise_set_fetch_changed_location(lat_lng))
+		.then(results => fetch_results_store(results))
+		.then(results => day_night_length_calculator(results))
+		.then(clock => {
+			convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
+			time_sync(clock);
+			if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
+				day_ticker_trigger(clock);
+				drawClock();
+			} else {
 				night_ticker_trigger(clock);
 				drawClock();
 			}
@@ -210,9 +330,17 @@ let clock =
 
 //B. Calculate day length and night length in seconds from "The API Side- Basic".//
 function day_night_length_calculator() {
-	return new Promise (function(resolve, reject) { // is there a way to clean this all up?
-		clock.regularTime.sunsetToday = convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
-		clock.regularTime.sunriseToday = convertTimeToSecondsUtc(api_results.results.sunrise, clock.regularTime.timezoneOffset);
+	return new Promise (function(resolve, reject) {
+		if (utcOffset !== 0) {
+			clock.regularTime.sunsetToday = convertTimeToSecondsUtc(api_results.results.sunset, (Math.abs(((utcOffset / 60) / 60))));
+		} else {
+			clock.regularTime.sunsetToday = convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
+		}
+		if (utcOffset !== 0) {
+			clock.regularTime.sunriseToday = convertTimeToSecondsUtc(api_results.results.sunrise, (Math.abs(((utcOffset / 60) / 60))));
+		} else {
+			clock.regularTime.sunriseToday = convertTimeToSecondsUtc(api_results.results.sunrise, clock.regularTime.timezoneOffset);
+		}
 		clock.day_clock.dayLengthInSeconds = convertTimeToSeconds(api_results.results.day_length);
 		clock.night_clock.nightLengthInSeconds = ((86400) - (clock.day_clock.dayLengthInSeconds));
 		let twelvePartsDay = clock.day_clock.dayLengthInSeconds / 12;
@@ -221,23 +349,24 @@ function day_night_length_calculator() {
 		clock.night_clock.talmudicNightMinute = ((twelvePartsNight) / 60);
 		if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
 			// After sunrise but before sunset
-			console.log(`this 'if' worked on 218`);
+			console.log(`348`);
 			clock.day_clock.currentTalmudicSecondFromSunrise = (clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday);
 			clock.night_clock.currentTalmudicSecondFromSunset = 00;
 		} else if ((((clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday)) <= 0) && (((clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday)) <= clock.regularTime.sunriseToday)) {
 			// Before sunrise but after midnight
-			console.log(`this 'else if' worked on 223`);
+			console.log(`353`);
 			clock.day_clock.currentTalmudicSecondFromSunrise = 00;
 			clock.night_clock.currentTalmudicSecondFromSunset = ((86400 - (clock.day_clock.dayLengthInSeconds + clock.regularTime.sunriseToday)) + (clock.regularTime.regDayCurrentInSeconds));
 		} else if ((((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday)) >= (clock.day_clock.dayLengthInSeconds)) && ((clock.regularTime.regDayCurrentInSeconds >= clock.day_clock.dayLengthInSeconds))) {
 			// after sunset but before midnight
-			console.log(`This 'else if' worked on 228`)
+			console.log(`358`);
 			clock.day_clock.currentTalmudicSecondFromSunrise = 00;
 			clock.night_clock.currentTalmudicSecondFromSunset = (clock.regularTime.regDayCurrentInSeconds - (clock.regularTime.sunsetToday + 43200));
 		} else {
 			console.log(`Error: Something went wrong with day_night_length_calculator() on line 232`)
 		}
 		resolve(clock);
+		console.log(clock);
 	});
 }
 
@@ -253,11 +382,9 @@ function day_ticker_trigger(clock) {
 	return new Promise ((resolve, reject) => {
 		dayTicker = setInterval(() => {
 			clock.day_clock.seconds = clock.day_clock.seconds + 1;
-			console.log(dayClockArray);
 			day_minute_hour_ticker_checker(clock);
-			reg_time_pull();
+			reg_time_pull(utcOffset);
 			dayClockArray = `${padArrayDisplay(clock.day_clock.hours)}${clock.day_clock.hours}:${padArrayDisplay(clock.day_clock.minutes)}${clock.day_clock.minutes}:${padArrayDisplay(clock.day_clock.seconds)}${clock.day_clock.seconds}`;
-			console.log(regClockArray);
 			drawClock();
 			$(regular_digital_clock_display);
 			$(talmudic_digital_clock_display);
@@ -270,11 +397,9 @@ function day_ticker_trigger(clock) {
 function night_ticker_trigger(clock) {
 	nightTicker = setInterval(() => {
 		clock.night_clock.seconds = clock.night_clock.seconds + 1;
-		console.log(nightClockArray);
 		night_minute_hour_ticker_checker(clock);
-		reg_time_pull();
+		reg_time_pull(utcOffset);
 		nightClockArray = `${padArrayDisplay(clock.night_clock.hours)}${clock.night_clock.hours}:${padArrayDisplay(clock.night_clock.minutes)}${clock.night_clock.minutes}:${padArrayDisplay(clock.night_clock.seconds)}${clock.night_clock.seconds}`;
-		console.log(regClockArray);
 		drawClock();
 		$(regular_digital_clock_display);
 		$(talmudic_digital_clock_display);
@@ -286,20 +411,18 @@ function day_minute_hour_ticker_checker(clock) {
 	if (clock.day_clock.seconds >= (clock.day_clock.talmudicDayMinute - 1)) {
 		clock.day_clock.minutes = clock.day_clock.minutes + 1;
 		clock.day_clock.seconds = 00;
-		console.log(clock);
 	};
 	if (clock.day_clock.minutes > 59) {
 		clock.day_clock.hours = clock.day_clock.hours + 1;
 		clock.day_clock.minutes = 00;
-		console.log(clock.day_clock);
 	};
 	if (clock.day_clock.hours >= 12) {
 		clock.day_clock.hours = 00;
 		clock.day_clock.minutes = 00;
 		clock.day_clock.seconds = 00;
-		console.log(clock.day_clock);
 		clearInterval(dayTicker);
 		night_ticker_trigger(clock);
+		console.log(clock);
 	};
 }
 
@@ -307,20 +430,18 @@ function night_minute_hour_ticker_checker(clock) {
 	if (clock.night_clock.seconds >= (clock.night_clock.talmudicNightMinute - 1)) {
 		clock.night_clock.minutes = clock.night_clock.minutes + 1;
 		clock.night_clock.seconds = 00;
-		console.log(clock);
 	};
 	if (clock.night_clock.minutes > 59) {
 		clock.night_clock.hours = clock.night_clock.hours + 1;
 		clock.night_clock.minutes = 00;
-		console.log(clock.night_clock);
 	};
 	if (clock.night_clock.hours >= 12) {
 		clock.night_clock.hours = 00;
 		clock.night_clock.minutes = 00;
 		clock.night_clock.seconds = 00;
-		console.log(clock.day_clock);
 		clearInterval(nightTicker);
 		day_ticker_trigger(clock); 
+		console.log(clock);
 	};
 }
 
@@ -329,17 +450,25 @@ function night_minute_hour_ticker_checker(clock) {
 // (or night) the talmudic time is currently up to and set the clock varaibles with
 // that info as its base time. (should load on start of page and reload button).//
 let regClockArray = '';
+let utcOffset = 0;
 
-function reg_time_pull() {
+function reg_time_pull(utcOffset) {
 	let regularTimePull = new Date();
-	clock.regularTime.hours = regularTimePull.getHours();
+	clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
+	if (utcOffset !== 0) {
+		clock.regularTime.hours = ((regularTimePull.getHours()) + ((utcOffset / 60) / 60) + clock.regularTime.timezoneOffset);
+	} else {
+		clock.regularTime.hours = (regularTimePull.getHours());
+	}
 	clock.regularTime.minutes = regularTimePull.getMinutes();
 	clock.regularTime.seconds = regularTimePull.getSeconds();
 	clock.regularTime.milliseconds = regularTimePull.getMilliseconds();
 	clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
 	clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime);
 	regClockArray = `${padArrayDisplay(clock.regularTime.hours)}${clock.regularTime.hours}:${padArrayDisplay(clock.regularTime.minutes)}${clock.regularTime.minutes}:${padArrayDisplay(clock.regularTime.seconds)}${clock.regularTime.seconds}`;
+	console.log(clock);
 }
+
 
 let nightClockArray = '';
 let dayClockArray = '';
@@ -354,7 +483,6 @@ function time_sync(clock) {
 			clock.day_clock.hours = Math.trunc(currentTalmudicDayHour);
 			clock.day_clock.minutes = extractMinutesFromDecimal(currentTalmudicDayHour);
 			clock.day_clock.seconds = extractSecondsFromDecimal(currentTalmudicDayTimeInMinutes);
-			console.log(clock.day_clock);
 		} else {
 			let currentTalmudicNightTime = (clock.night_clock.currentTalmudicSecondFromSunset);
 			let currentTalmudicNightTimeInMinutes = currentTalmudicNightTime / clock.night_clock.talmudicNightMinute;
@@ -362,9 +490,9 @@ function time_sync(clock) {
 			clock.night_clock.hours = Math.trunc(currentTalmudicNightHour);
 			clock.night_clock.minutes = extractMinutesFromDecimal(currentTalmudicNightHour);
 			clock.night_clock.seconds = extractSecondsFromDecimal(currentTalmudicNightTimeInMinutes);
-			console.log(clock.night_clock);
 		}
 	resolve(clock);
+	console.log(clock);
 	})
 }
 
@@ -383,13 +511,17 @@ function convertTimeToSeconds(time) {
 
 function convertTimeToSecondsUtc(time, utc) {
 	if (typeof time === "string" || time instanceof String) {
+		console.log(`514`);
 		splitAndParseInt(time);
 		info_store.timeInSecondsUtc = (((((info_store.parsedArray[0] - utc) * 60) + (info_store.parsedArray[1])) * 60)  + info_store.parsedArray[2]);
 	} else if (typeof time === "object" || time instanceof Object) {
+		console.log(`518`);
 		info_store.timeInSecondsUtc = (((((time.hours - utc) * 60 ) + (time.minutes)) * 60)  + time.seconds);
 	} else {
+		console.log(`521`);
 		info_store.timeInSecondsUtc = (((((time[0] - utc) * 60) + (time[1])) * 60)  + time[2]);
 	};
+	console.log(info_store.timeInSecondsUtc);
 	return info_store.timeInSecondsUtc;
 }
 
@@ -474,7 +606,7 @@ function padArrayDisplay(int) {
 
 
 /*Extra Store*/
-
+//
 let info_store = {
 	timeInSeconds: '',
 	timeInSecondsUtc: '',
@@ -484,10 +616,126 @@ let info_store = {
 
 
 /*Other Functions to be inserted above*/
-// A. Insert dif location
-// B. Sync Clock Button
-// C. Important time functions...
+//
+function settingsButton() {
+	$('.settings').on( "click",( event => {
+		event.preventDefault();	
+		$('.settings').toggleClass("clickToggle");
+		if ($('.settings').hasClass("clickToggle")) {
+			$('.analog_clock').css("grid-column", "1 / 2");
+			$('.settings_container').css("display", "grid");
+		} else {
+			$('.analog_clock').css("grid-column", "1 / 3");
+			$('.settings_container').css("display", "none");
+		}
+	}));
+}
 
+function list_viewToggle() {
+	$('.list-view').on( "click",( event => {
+		event.preventDefault();	
+		$('.settings_container').css("display", "none");
+		$('footer').css("display", "none");
+		$('.analog_clock').css("display", "none");
+		$('.list_container').css("display", "grid");
+		$('.list_container').html(
+			`<ul class="hs">
+				<li class="item">Sunrise:</li>
+				<li class="item">Latest Shema (Gra and Baal HaTanya):</li>
+				<li class="item">Latest Shacharit (Gra and Baal HaTanya):</li>
+				<li class="item">Midday:</li>
+				<li class="item">Earliest Minchah:</li>
+				<li class="item">Minchah Ketanah:</li>
+				<li class="item">Plag Haminchah:</li>
+				<li class="item">Sunset:</li>
+				<li class="item">Nightfall (3 stars):</li>
+				<li class="item">Nightfall (72 minutes):</li>
+			</ul>
+			<button type="button" class="return_button"><p>Return</p></button>`
+		);
+		returnToggle('.list_container');
+	}));
+}
+
+function changeLocationToggle() {
+	$('.change-location').on( "click",( event => {
+		event.preventDefault();	
+		$('.settings_container').css("display", "none");
+		$('footer').css("display", "none");
+		$('.analog_clock').css("display", "none");
+		$('.list_container').css("display", "grid");
+		$('.list_container').html(
+			`<form class="change_location_form">
+				<label for="zip_code">Please Enter Your Zip Code:</label>
+				<input type="text" id="zip_code" name="zip_code" required
+				minlength="5" maxlength="5">
+				<br>
+				<input class="change_location_submit_button" type="submit" value="Submit">
+			</form>
+			<button type="button" class="return_button"><p>Return</p></button>`
+		);
+		returnToggle('.list_container');
+		submit_location_change();
+	}));
+}
+
+function submit_location_change() {
+	$('.change_location_form').on( "submit",( event => {
+		event.preventDefault();	
+		zip_code = $('#zip_code').val();
+		changed_location_time_pull(zip_code);
+		$('.settings_container').css("display", "grid");
+		$('footer').css("display", "block");
+		$('.analog_clock').css("display", "grid");
+		$('.list_container').css("display", "none");
+	}));
+}
+
+function reportAProblemToggle() {
+	$('.report-a-problem').on( "click",( event => {
+		event.preventDefault();	
+		console.log(`this clicked`);
+		$('.settings_container').css("display", "none");
+		$('footer').css("display", "none");
+		$('.analog_clock').css("display", "none");
+		$('.list_container').css("display", "grid");
+		$('.list_container').html(
+			`<form class="report_a_problem_form">
+				<label for="problemReport">What's wrong?</label>
+				<br>
+				<input type="text" id="problemReport" name="problemReport" min="1">
+				<br>
+				<input class="report_a_problem_submit" type="submit" value="Submit">
+			</form>
+			<button type="button" class="return_button"><p>Return</p></button>`
+		);
+		returnToggle('.list_container');
+		submit_report_a_problem()
+	}));
+}
+
+function submit_report_a_problem() {
+	$('.report_a_problem_form').on( "submit",( event => {
+		event.preventDefault();	
+		problemReport = $('#problemReport').val();
+		$('.settings_container').css("display", "grid");
+		$('footer').css("display", "block");
+		$('.analog_clock').css("display", "grid");
+		$('.list_container').css("display", "none");
+		window.open(`mailto:theholycoder@gmail.com?subject=Problem With "The Talmudic Clock App" - Customer Report&body=${problemReport}`);
+	}));
+}
+
+function returnToggle(holder) {
+	$('.list_container').on("click", ".return_button",( event => {
+		event.preventDefault();	
+		console.log(`this clicked`);
+		$('.settings_container').css("display", "grid");
+		$('footer').css("display", "block");
+		$('.analog_clock').css("display", "grid");
+		$(holder).css("display", "none")
+	}));
+}
 
 /*Drawing the Analog Clock Side (DACS)*/
 //
@@ -569,7 +817,6 @@ function drawTimeNight(ctx, radius){
 	// second
 	second = (second*Math.PI/(clock.night_clock.talmudicNightMinute / 2));
 	drawHand(ctx, second, radius*0.9, radius*0.02);
-	console.log(`The angle of hands... Hour: '${hour}', Minute: '${minute}', Second: '${second}'`);
 }
 
 function drawTimeDay(ctx, radius){
@@ -586,7 +833,6 @@ function drawTimeDay(ctx, radius){
 	// second
 	second = (second*Math.PI/(clock.day_clock.talmudicDayMinute / 2));
 	drawHand(ctx, second, radius*0.9, radius*0.02);
-	console.log(`The angle of hands... Hour: '${hour}', Minute: '${minute}', Second: '${second}'`);
 }
   
 function drawHand(ctx, pos, length, width) {
@@ -600,39 +846,6 @@ function drawHand(ctx, pos, length, width) {
 	ctx.rotate(-pos);
 }
 
-window.addEventListener(
-    'load',
-    function () {
-        var canvas = document.getElementsByTagName('canvas')[0];
-
-        fullscreenify(canvas);
-    },
-    false
-);
-
-function fullscreenify(canvas) {
-    var style = canvas.getAttribute('style') || '';
-    
-    window.addEventListener('resize', function () {resize(canvas);}, false);
-
-    resize(canvas);
-
-    function resize(canvas) {
-        var scale = {x: 1, y: 1};
-        scale.x = (window.innerWidth - 10) / canvas.width/10;
-        scale.y = (window.innerHeight - 10) / canvas.height/10;
-        
-        if (scale.x < 1 || scale.y < 1) {
-            scale = '1, 1';
-        } else if (scale.x < scale.y) {
-            scale = scale.x + ', ' + scale.x;
-        } else {
-            scale = scale.y + ', ' + scale.y;
-        }
-        
-        canvas.setAttribute('style', style + ' ' + '-ms-transform-origin: center top; -webkit-transform-origin: center top; -moz-transform-origin: center top; -o-transform-origin: center top; transform-origin: center top; -ms-transform: scale(' + scale + '); -webkit-transform: scale3d(' + scale + ', 1); -moz-transform: scale(' + scale + '); -o-transform: scale(' + scale + '); transform: scale(' + scale + ');');
-    }
-}
 
 /*Drawing the Digital Clocks Side (DDCS)*/
 // 
@@ -659,8 +872,12 @@ function talmudic_digital_clock_display() {
 /*Run All Functions*/
 
 function run_all_functions() {
-	reg_time_pull();
-	new_day_toggle();
+	reg_time_pull(utcOffset);
+	initial_pull_and_new_day_toggle();
+	settingsButton();
+	list_viewToggle()
+	changeLocationToggle();
+	reportAProblemToggle();
 }
 
 run_all_functions();
