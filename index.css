@@ -106,6 +106,30 @@ header {
     height: 300px;
 }
 
+.info_contianer {
+    grid-row: 1 / 2;
+    width: 75vw;
+    height: 50vh;
+    overflow: auto;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.info_header {
+    text-align: center;
+    text-decoration: underline;
+}
+
+.info_exit_button {
+    grid-row: 2 / 3;
+    align-self: end;
+    justify-self: end;
+    background-color: rgba(109, 87, 13, 0.65);
+    color:rgba(22, 192, 7, 1);
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px inset black;
+}
+
 .settings_container {
     display: none;
     grid-template-columns: 1fr;
@@ -151,6 +175,33 @@ header {
 
 .settings-button-list {
     grid-row: 2 / 3;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1 1 1 1;
+}
+
+.info_button {
+    grid-row: 1 / 2;
+    align-self: stretch;
+    justify-self: center;
+}
+
+.list-view_button {
+    grid-row: 2 / 3;
+    align-self: stretch;
+    justify-self: center;
+}
+
+.change-location_button {
+    grid-row: 3 / 4;
+    align-self: stretch;
+    justify-self: center;
+}
+
+.report-a-problem_button {
+    grid-row: 4 / 5;
+    align-self: stretch;
+    justify-self: center;
 }
 
 ul {

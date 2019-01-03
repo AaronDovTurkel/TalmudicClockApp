@@ -9,13 +9,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.css" rel="stylesheet">
     <link href="index.css" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css?family=Spicy+Rice" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
 <body>
-    <header role="banner">
+    <header>
         <p class="bsd">BS"D</p>
-        <p class="title">The Talmudic Clock App</p>
+        <h1 class="title">Talmudic Clock App</h1>
     </header>
-    <main class="clocks lists" role="main">
+    <main class="clocks lists">
         <div class="regular_digital_clock">
             <p>Regular</p>
             <p>Time</p>
@@ -33,21 +34,24 @@
         <div class="settings_container">
             <span class="settings_header">Settings</span>
             <ul class="settings-button-list">
-                <li>
-                    <button type="button" class="list-view button"><p>List-View</p></button>
+                <li class="info_button">
+                    <button type="button" class="info button"><p>Info</p></button>
                 </li>
-                <li>
-                    <button type="button" class="change-location button"><p>Change Location</p></button>
+                <li class="list-view_button">
+                    <button type="button" role="button" class="list-view button"><p>List-View</p></button>
                 </li>
-                <li>
-                    <button type="button" class="report-a-problem button"><p>Report a Problem</p></button>
+                <li class="change-location_button">
+                    <button type="button" role="button" class="change-location button"><p>Change Location</p></button>
+                </li>
+                <li class="report-a-problem_button">
+                    <button type="button" role="button" class="report-a-problem button"><p>Report a Problem</p></button>
                 </li>
             </ul>
         </div>
         <div class="list_container"></div>
     </main>
     <footer>
-        <button type="button" class="settings"></button>
+        <button type="button" role="button" class="settings" alt="settings"></button>
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="index.js"></script>

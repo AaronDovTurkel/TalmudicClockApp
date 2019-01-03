@@ -459,7 +459,7 @@ function reg_time_pull(utcOffset) {
 	clock.regularTime.milliseconds = regularTimePull.getMilliseconds();
 	clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
 	clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime);
-	regClockArray = `${padArrayDisplay(clock.regularTime.hours)}${clock.regularTime.hours}:${padArrayDisplay(clock.regularTime.minutes)}${clock.regularTime.minutes}:${padArrayDisplay(clock.regularTime.seconds)}${clock.regularTime.seconds}`;
+	regClockArray = `${padArrayDisplay((armyTimeConverter(clock.regularTime.hours)))}${armyTimeConverter(clock.regularTime.hours)}:${padArrayDisplay(clock.regularTime.minutes)}${clock.regularTime.minutes}:${padArrayDisplay(clock.regularTime.seconds)}${clock.regularTime.seconds}`;
 }
 
 
@@ -592,6 +592,12 @@ function padArrayDisplay(int) {
 	}
 }
 
+function armyTimeConverter(hour) {
+	if (hour > 12) {
+		return hour - 12;
+	}
+}
+
 
 /*Extra Store*/
 //
@@ -639,7 +645,7 @@ function list_viewToggle() {
 				<li class="item">Nightfall (3 stars):</li>
 				<li class="item">Nightfall (72 minutes):</li>
 			</ul>
-			<button type="button" class="return_button"><p>Return</p></button>`
+			<button type="button" role="button" class="return_button"><p>Return</p></button>`
 		);
 		returnToggle('.list_container');
 	}));
@@ -660,7 +666,7 @@ function changeLocationToggle() {
 				<br>
 				<input class="change_location_submit_button" type="submit" value="Submit">
 			</form>
-			<button type="button" class="return_button"><p>Return</p></button>`
+			<button type="button" role="button" class="return_button"><p>Return</p></button>`
 		);
 		returnToggle('.list_container');
 		submit_location_change();
@@ -694,7 +700,7 @@ function reportAProblemToggle() {
 				<br>
 				<input class="report_a_problem_submit" type="submit" value="Submit">
 			</form>
-			<button type="button" class="return_button"><p>Return</p></button>`
+			<button type="button" role="button" class="return_button"><p>Return</p></button>`
 		);
 		returnToggle('.list_container');
 		submit_report_a_problem()
@@ -721,6 +727,83 @@ function returnToggle(holder) {
 		$('.analog_clock').css("display", "grid");
 		$(holder).css("display", "none")
 	}));
+}
+
+function exitToggle(holder) {
+	$('.list_container').on("click", ".info_exit_button",( event => {
+		event.preventDefault();	
+		$('.analog_clock').css("display", "grid");
+		$('.analog_clock').css("grid-column", "1 / 3");
+		$('footer').css("display", "block");
+		$(holder).css("display", "none")
+	}));
+}
+
+function infoFloater() {
+	$('.info').on( "click",( event => {
+		event.preventDefault();	
+		$('.settings_container').css("display", "none");
+		$('footer').css("display", "none");
+		$('.analog_clock').css("display", "none");
+		$('.list_container').css("display", "grid");
+		$('.settings').toggleClass("clickToggle");
+		$('.list_container').html(
+			'<div class="info_container">'	+
+				'<h2 class="info_header">Info</h2> ' +
+				'<p class="info_paragraph">The "Talmudic Clock App" is a modern sun-dial designed ' +
+				'to quickly view Jewish prayer times. ' +
+				'According to Jewish law the Talmud calculates ' +
+				'the time of day by dividing both the day (sunrise to sunset) and night ' +
+				'(sunset to sunrise) into twelve equal parts. This is known as' +
+				'"Shaos Zmanios"; which in english means: "hour times". ' +
+				'This app uses mathematical equations and API calls to create ' +
+				'an engine to calculate and display that "Shaos Zmanious" hour, ' +
+				'or talmudic hour. ' +
+				'Additionally, using that same internal engine, common ' +
+				'prayer times are determined based off the users ' +
+				'current location and displayed ' +
+				'in the "List-View" section located in the settings tab (the gear image).</p>' + 
+			'</div>' +
+			'<button type="button" role="button" class="info_exit_button"><p>X</p></button>'
+		);
+		exitToggle('.list_container');
+	}));
+}
+
+function initialInfoLoad() {
+	$('.settings_container').css("display", "none");
+	$('footer').css("display", "none");
+	$('.analog_clock').css("display", "none");
+	$('.list_container').css("display", "grid");
+	$('.list_container').html(
+		'<div class="info_container">'	+
+			'<h2 class="info_header">Info</h2> ' +
+			'<p class="info_paragraph">The "Talmudic Clock App" is a modern sun-dial designed ' +
+			'to quickly view Jewish prayer times. ' +
+			'According to Jewish law the Talmud calculates ' +
+			'the time of day by dividing both the day (sunrise to sunset) and night ' +
+			'(sunset to sunrise) into twelve equal parts. This is known as' +
+			'"Shaos Zmanios"; which in english means: "hour times". ' +
+			'This app uses mathematical equations and API calls to create ' +
+			'an engine to calculate and display that "Shaos Zmanious" hour, ' +
+			'or talmudic hour. ' +
+			'Additionally, using that same internal engine, common ' +
+			'prayer times are determined based off the users ' +
+			'current location and displayed ' +
+			'in the "List-View" section located in the settings tab (the gear image).</p>' + 
+		'</div>' +
+		'<button type="button" class="info_exit_button"><p>X</p></button>'
+	);
+	exitToggle('.list_container');
+}
+
+function runAllSetting() {
+	initialInfoLoad();
+	settingsButton();
+	list_viewToggle();
+	changeLocationToggle();
+	reportAProblemToggle();
+	infoFloater();
 }
 
 /*Drawing the Analog Clock Side (DACS)*/
@@ -860,10 +943,7 @@ function talmudic_digital_clock_display() {
 function run_all_functions() {
 	reg_time_pull(utcOffset);
 	initial_pull_and_new_day_toggle();
-	settingsButton();
-	list_viewToggle()
-	changeLocationToggle();
-	reportAProblemToggle();
+	runAllSetting();
 }
 
 run_all_functions();
