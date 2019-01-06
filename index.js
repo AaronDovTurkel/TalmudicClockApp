@@ -1,4 +1,4 @@
-/*The API Side - Basic*/
+/*The API Side*/
 
 //API Info Objects//
 const ip_loc_api_data = {
@@ -33,6 +33,7 @@ function json_fetcher(url) {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
 }
+
 //Reusable format query parameters function//
 function formatQueryParams(params) {
   const queryItems = Object.keys(params)
@@ -199,8 +200,6 @@ function changed_location_time_pull(zip_code) {
 		});
 }
 
-
-
 //Final API Fetches//
 function before_sunrise_promise() {
 	ip_geolocator_fetch()
@@ -285,7 +284,6 @@ function after_sunrise_promise_alt() {
 
 
 /*The Math Behind the Talmudic Clock Side (TMBTCS)*/
-
 //Storage//
 let clock =
 	{
@@ -316,7 +314,8 @@ let clock =
 				regDayCurrentInSeconds: 0,
 				timezoneOffset: 0,
 				sunriseToday: 0,
-				sunsetToday: 0
+				sunsetToday: 0,
+				date: 0
 			}
 	}
 
@@ -381,8 +380,7 @@ let info_store =
 		parsedArray: '',
 		minuteConversion: 0
 	}
-
-
+	
 //Calculate day length and night length in seconds from "The API Side- Basic".//
 function day_night_length_calculator() {
 	return new Promise (function(resolve, reject) {
@@ -413,7 +411,7 @@ function day_night_length_calculator() {
 		} else if ((((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday)) >= (clock.day_clock.dayLengthInSeconds)) && ((clock.regularTime.regDayCurrentInSeconds >= clock.day_clock.dayLengthInSeconds))) {
 			// after sunset but before midnight
 			clock.day_clock.currentTalmudicSecondFromSunrise = 00;
-			clock.night_clock.currentTalmudicSecondFromSunset = (clock.regularTime.regDayCurrentInSeconds - (clock.regularTime.sunsetToday + 43200));
+			clock.night_clock.currentTalmudicSecondFromSunset = (clock.regularTime.regDayCurrentInSeconds - (clock.regularTime.sunsetToday));
 		} else {
 			console.log(`Error: Something went wrong with day_night_length_calculator() on line 232`)
 		}
@@ -514,6 +512,7 @@ function reg_time_pull(utcOffset) {
 	clock.regularTime.milliseconds = regularTimePull.getMilliseconds();
 	clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
 	clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime);
+	clock.regularTime.date = `${padArrayDisplay(regularTimePull.getMonth() + 1)}${(regularTimePull.getMonth() + 1)}, ${padArrayDisplay(regularTimePull.getDate())}${regularTimePull.getDate()}, ${regularTimePull.getFullYear()}`;
 	regClockArray = `${padArrayDisplay((armyTimeConverter(clock.regularTime.hours)))}${armyTimeConverter(clock.regularTime.hours)}:${padArrayDisplay(clock.regularTime.minutes)}${clock.regularTime.minutes}:${padArrayDisplay(clock.regularTime.seconds)}${clock.regularTime.seconds}`;
 }
 
@@ -794,8 +793,10 @@ function padArrayDisplay(int) {
 function armyTimeConverter(hour) {
 	if (hour > 12) {
 		return hour - 12;
+	} else if (hour === 00) {
+		return 12;
 	} else {
-		return hour
+		return hour;
 	}
 }
 
@@ -804,6 +805,10 @@ function armyTimeConverter(hour) {
 //
 function locationDisplay(lat_lng) {
 	$('.location_display').html(`(${lat_lng.results[0].formatted_address})`);
+}
+
+function dateDisplay() {
+	$('.date_display').html(`(${clock.regularTime.date})`);
 }
 
 function settingsButton() {
@@ -828,24 +833,29 @@ function list_viewToggle() {
 		$('.analog_clock').css("display", "none");
 		$('.list_container').css("display", "grid");
 		runAllPrayerCalculatorFunctions();
-		$('.list_container').html(
-			`<ul class="hs">
-				<li><span class="list-view-header">List-View</span></li>
-				<li>Sunrise <span class="item">${prayerTimeStore.sunrise}</span></li>
-				<li>Latest Shema (Gra and Baal HaTanya) <span class="item">${displayPrayerTimes(prayerTimeStore.latest_shema.hours, prayerTimeStore.latest_shema.minutes, prayerTimeStore.latest_shema.seconds)}</span></li>
-				<li>Latest Shacharit (Gra and Baal HaTanya) <span class="item">${displayPrayerTimes(prayerTimeStore.latest_shacharit.hours, prayerTimeStore.latest_shacharit.minutes, prayerTimeStore.latest_shacharit.seconds)}</span></li>
-				<li>Midday <span class="item">${displayPrayerTimes(prayerTimeStore.midday.hours, prayerTimeStore.midday.minutes, prayerTimeStore.midday.seconds)}</span></li>
-				<li>Earliest Minchah <span class="item">${displayPrayerTimes(prayerTimeStore.earliest_minchah.hours, prayerTimeStore.earliest_minchah.minutes, prayerTimeStore.earliest_minchah.seconds)}</span></li>
-				<li>Minchah Ketanah <span class="item">${displayPrayerTimes(prayerTimeStore.minchah_ketanah.hours, prayerTimeStore.minchah_ketanah.minutes, prayerTimeStore.minchah_ketanah.seconds)}</span></li>
-				<li>Plag Haminchah <span class="item">${displayPrayerTimes(prayerTimeStore.plag_haminchah.hours, prayerTimeStore.plag_haminchah.minutes, prayerTimeStore.plag_haminchah.seconds)}</span></li>
-				<li>Sunset <span class="item">${prayerTimeStore.sunset}</span></li>
-				<li>Nightfall (3 stars) <span class="item">${displayPrayerTimes(prayerTimeStore.nightfall_threeStars.hours, prayerTimeStore.nightfall_threeStars.minutes, prayerTimeStore.nightfall_threeStars.seconds)}</span></li>
-				<li>Nightfall (72 minutes) <span class="item">${displayPrayerTimes(prayerTimeStore.nightfall_seventyTwoMinutes.hours, prayerTimeStore.nightfall_seventyTwoMinutes.minutes, prayerTimeStore.nightfall_seventyTwoMinutes.seconds)}</span></li>
-			</ul>
-			<button type="button" class="return_button"><p>Return</p></button>`
-		);
+		list_viewGenerator();
+		dateDisplay();
 		returnToggle('.list_container');
 	}));
+}
+
+function list_viewGenerator() {
+	$('.list_container').html(
+		`<ul class="list_container-insert">
+			<li><span class="list-view-header">List-View</span><span class="date_display"></span></li>
+			<li>Sunrise: <span class="item">${prayerTimeStore.sunrise}</span></li>
+			<li>Latest Shema (Gra and Baal HaTanya): <span class="item">${displayPrayerTimes(prayerTimeStore.latest_shema.hours, prayerTimeStore.latest_shema.minutes, prayerTimeStore.latest_shema.seconds)}</span></li>
+			<li>Latest Shacharit (Gra and Baal HaTanya): <span class="item">${displayPrayerTimes(prayerTimeStore.latest_shacharit.hours, prayerTimeStore.latest_shacharit.minutes, prayerTimeStore.latest_shacharit.seconds)}</span></li>
+			<li>Midday: <span class="item">${displayPrayerTimes(prayerTimeStore.midday.hours, prayerTimeStore.midday.minutes, prayerTimeStore.midday.seconds)}</span></li>
+			<li>Earliest Minchah: <span class="item">${displayPrayerTimes(prayerTimeStore.earliest_minchah.hours, prayerTimeStore.earliest_minchah.minutes, prayerTimeStore.earliest_minchah.seconds)}</span></li>
+			<li>Minchah Ketanah: <span class="item">${displayPrayerTimes(prayerTimeStore.minchah_ketanah.hours, prayerTimeStore.minchah_ketanah.minutes, prayerTimeStore.minchah_ketanah.seconds)}</span></li>
+			<li>Plag Haminchah: <span class="item">${displayPrayerTimes(prayerTimeStore.plag_haminchah.hours, prayerTimeStore.plag_haminchah.minutes, prayerTimeStore.plag_haminchah.seconds)}</span></li>
+			<li>Sunset: <span class="item">${prayerTimeStore.sunset}</span></li>
+			<li>Nightfall (3 stars): <span class="item">${displayPrayerTimes(prayerTimeStore.nightfall_threeStars.hours, prayerTimeStore.nightfall_threeStars.minutes, prayerTimeStore.nightfall_threeStars.seconds)}</span></li>
+			<li>Nightfall (72 minutes): <span class="item">${displayPrayerTimes(prayerTimeStore.nightfall_seventyTwoMinutes.hours, prayerTimeStore.nightfall_seventyTwoMinutes.minutes, prayerTimeStore.nightfall_seventyTwoMinutes.seconds)}</span></li>
+		</ul>
+		<button type="button" class="return_button"><p>Return</p></button>`
+	);
 }
 
 function changeLocationToggle() {
@@ -965,27 +975,7 @@ function infoFloater() {
 		$('.analog_clock').css("display", "none");
 		$('.list_container').css("display", "grid");
 		$('.settings').toggleClass("clickToggle");
-		$('.list_container').html(
-			'<ul class="hs info_paragraph">'	+
-				'<li class="info_header">Info</li> ' +
-				'<li>The "Talmudic Clock App" is a modern sun-dial designed ' +
-				'to quickly view Jewish prayer times. ' +
-				'According to Jewish law the Talmud calculates ' +
-				'the time of day by dividing both the day (sunrise to sunset) and night ' +
-				'(sunset to sunrise) into twelve equal parts. This is known as ' +
-				'"Shaos Zmanios"; which means "hour times" in english. ' +
-				'</li>' +
-				'<li>This app uses mathematical equations and API calls to create ' +
-				'an engine to calculate and display that "Shaos Zmanious" hour, ' +
-				'or talmudic hour. ' +
-				'</li>' +
-				'<li>Additionally, using that same internal engine, common ' +
-				'prayer times are determined based off the users ' +
-				'current location and displayed ' +
-				'in the "List-View" section located in the settings tab (the gear image).</li>' + 
-			'</ul>' +
-			'<button type="button" class="info_exit_button"><p>Exit</p></button>'
-		);
+		infoGenerator();
 		exitToggle('.list_container');
 	}));
 }
@@ -995,28 +985,32 @@ function initialInfoLoad() {
 	$('footer').css("display", "none");
 	$('.analog_clock').css("display", "none");
 	$('.list_container').css("display", "grid");
+	infoGenerator();
+	exitToggle('.list_container');
+}
+
+function infoGenerator() {
 	$('.list_container').html(
-		'<ul class="hs">'	+
-			'<li class="info_header">Info</li> ' +
-			'<li class="info_paragraph">The "Talmudic Clock App" is a modern sun-dial designed ' +
+		'<div class="list_container-insert">'	+
+			'<span class="info_header">Info</span> ' +
+			'<p class="info_paragraph">The "Talmudic Clock App" is a modern sun-dial designed ' +
 			'to quickly view Jewish prayer times. ' +
 			'According to Jewish law the Talmud calculates ' +
 			'the time of day by dividing both the day (sunrise to sunset) and night ' +
 			'(sunset to sunrise) into twelve equal parts. This is known as ' +
-			'"Shaos Zmanios"; which means "hour times" in english. ' +
-			'</li>' +
-			'<li>This app uses mathematical equations and API calls to create ' +
+			'"Shaos Zmanios"; which means "hour times" in english.</p>' +
+			'<br>' +
+			'<p>This app uses mathematical equations and API calls to create ' +
 			'an engine to calculate and display that "Shaos Zmanious" hour, ' +
-			'or talmudic hour. ' +
-			'</li>' +
-			'<li>Additionally, using that same internal engine, common ' +
+			'or talmudic hour.</p>' +
+			'<br>' +
+			'<p>Additionally, using that same internal engine, common ' +
 			'prayer times are determined based off the users ' +
 			'current location and displayed ' +
-			'in the "List-View" section located in the settings tab (the gear image).</li>' + 
-		'</ul>' +
+			'in the "List-View" section located in the settings tab (the gear image).</p>' + 
+		'</div>' +
 		'<button type="button" class="info_exit_button"><p>Exit</p></button>'
 	);
-	exitToggle('.list_container');
 }
 
 function runAllSetting() {
@@ -1027,6 +1021,29 @@ function runAllSetting() {
 	reportAProblemToggle();
 	infoFloater();
 }
+
+
+/*Displaying the Digital Clocks Side (DDCS)*/
+// 
+function regular_digital_clock_display() {
+	$('.regularTimeDisplay').html(
+		`${regClockArray}`
+	)
+}
+
+function talmudic_digital_clock_display() {
+	if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
+		$('.talmudicTimeDisplay').html(
+			`${dayClockArray}`
+		)
+	} else {
+		$('.talmudicTimeDisplay').html(
+			`${nightClockArray}`
+		)
+	}
+
+}
+
 
 /*Drawing the Analog Clock Side (DACS)*/
 //
@@ -1138,30 +1155,8 @@ function drawHand(ctx, pos, length, width) {
 }
 
 
-/*Displaying the Digital Clocks Side (DDCS)*/
-// 
-function regular_digital_clock_display() {
-	$('.regularTimeDisplay').html(
-		`${regClockArray}`
-	)
-}
-
-function talmudic_digital_clock_display() {
-	if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
-		$('.talmudicTimeDisplay').html(
-			`${dayClockArray}`
-		)
-	} else {
-		$('.talmudicTimeDisplay').html(
-			`${nightClockArray}`
-		)
-	}
-
-}
-
-
 /*Run All Functions*/
-
+//
 function run_all_functions() {
 	reg_time_pull(utcOffset);
 	initial_pull_and_new_day_toggle();

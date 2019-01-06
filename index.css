@@ -50,7 +50,6 @@ header {
     padding: 5px;
 }
 
-
 .clocks {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -115,12 +114,11 @@ header {
 }
 
 .info_header {
+    display: block;
     text-align: center;
     text-decoration: underline;
-}
-
-.info_paragraph {
-    letter-spacing: .08em;
+    color: black;
+    margin-bottom: 8px;
 }
 
 .location_display {
@@ -201,8 +199,18 @@ header {
 }
 
 .list-view-header {
+    display: block;
+    text-align: center;
     color: black;
     text-decoration: underline;
+}
+
+.date_display {
+    display: block;
+    text-align: center;
+    font-size: .4em;
+    padding: 5px;
+    text-decoration: none;
     margin-bottom: 15px;
 }
 
@@ -246,7 +254,7 @@ li {
     color: rgba(109, 87, 13, 0.884);
 }
 
-.hs {
+.list_container-insert {
     grid-row: 1 / 2;
     width: 75vw;
     height: 50vh;
