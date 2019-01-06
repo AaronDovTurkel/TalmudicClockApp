@@ -13,12 +13,12 @@ const sun_rise_set_api_data = {
 const geocoding_google_api = {
 	apiKey: 'AIzaSyCfYCurA2DoL9SIN0MmIiZWcIG1RP0LRx4', 
 	searchURL: 'https://maps.googleapis.com/maps/api/geocode/json',
-}
+};
 
 const utc_offset_google_api = {
 	apiKey: 'AIzaSyCfYCurA2DoL9SIN0MmIiZWcIG1RP0LRx4',
 	searchURL: 'https://maps.googleapis.com/maps/api/timezone/json'
-}
+};
 
 //Resuable FETCH function and Json conversion//
 function json_fetcher(url) {
@@ -32,7 +32,7 @@ function json_fetcher(url) {
     .catch(err => {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
-}
+};
 
 //Reusable format query parameters function//
 function formatQueryParams(params) {
@@ -50,7 +50,7 @@ function ip_geolocator_fetch() {
   const url = ip_loc_api_data.searchURL + '?' + queryString;
 
   return json_fetcher(url);
-}
+};
 
 function geocodeing_google_fetch(zip_code) {
 	const params = {
@@ -63,7 +63,7 @@ function geocodeing_google_fetch(zip_code) {
 	console.log(url);
   
 	return json_fetcher(url);
-}
+};
 
 function changed_location_time_fetch(lat_lng) {
 	const params = {
@@ -76,7 +76,7 @@ function changed_location_time_fetch(lat_lng) {
 
   
 	return json_fetcher(url);
-}
+};
 
 
 //Further API Fetch//
@@ -90,7 +90,7 @@ function sun_rise_set_fetch(lat_lng) {
   const url = sun_rise_set_api_data.searchURL + '?' + queryString;
 
   return json_fetcher(url);
-}
+};
 
 function sun_rise_set_fetch_alt(lat_lng) {
   const params = {
@@ -103,7 +103,7 @@ function sun_rise_set_fetch_alt(lat_lng) {
   const url = sun_rise_set_api_data.searchURL + '?' + queryString;
 
   return json_fetcher(url);
-}
+};
 
 function sun_rise_set_fetch_changed_location(lat_lng) {
 	const params = {
@@ -115,7 +115,7 @@ function sun_rise_set_fetch_changed_location(lat_lng) {
 	const url = sun_rise_set_api_data.searchURL + '?' + queryString;
   
 	return json_fetcher(url);
-}
+};
 
 function sun_rise_set_fetch_changed_location_alt(lat_lng) {
 	const params = {
@@ -128,7 +128,7 @@ function sun_rise_set_fetch_changed_location_alt(lat_lng) {
 	const url = sun_rise_set_api_data.searchURL + '?' + queryString;
   
 	return json_fetcher(url);
-  }
+};
 
 //Variable creator function for fetch results//
 let api_results = '0'; 
@@ -138,7 +138,7 @@ function fetch_results_store(results) {
 		api_results = results;
 		resolve(results);	
 	});
-}
+};
 
 let new_day = true;
 
@@ -198,7 +198,7 @@ function changed_location_time_pull(zip_code) {
 		.catch(err => {
 			$('#js-error-message').text(`Something went wrong: ${err.message}`);
 		});
-}
+};
 
 //Final API Fetches//
 function before_sunrise_promise() {
@@ -317,7 +317,7 @@ let clock =
 				sunsetToday: 0,
 				date: 0
 			}
-	}
+	};
 
 let prayerTimeStore = 
 	{
@@ -371,7 +371,7 @@ let prayerTimeStore =
 				minutes: 00,
 				seconds: 00
 			}
-	}
+	};
 
 let info_store = 
 	{
@@ -379,7 +379,7 @@ let info_store =
 		timeInSecondsUtc: '',
 		parsedArray: '',
 		minuteConversion: 0
-	}
+	};
 	
 //Calculate day length and night length in seconds from "The API Side- Basic".//
 function day_night_length_calculator() {
@@ -417,7 +417,7 @@ function day_night_length_calculator() {
 		}
 		resolve(clock);
 	});
-}
+};
 
 
 //Minute ticker (timeout) for day and night.//
@@ -438,7 +438,7 @@ function day_ticker_trigger(clock) {
 		dayTicker;	
 		resolve(clock);	
 	})
-}
+};
 
 function night_ticker_trigger(clock) {
 	nightTicker = setInterval(() => {
@@ -451,7 +451,7 @@ function night_ticker_trigger(clock) {
 		$(talmudic_digital_clock_display);
 	}, 1000)
 	nightTicker;
-}
+};
 
 //Function that uses minute ticker (timeout) and increments the clock variables.//
 function day_minute_hour_ticker_checker(clock) {
@@ -470,7 +470,7 @@ function day_minute_hour_ticker_checker(clock) {
 		clearInterval(dayTicker);
 		night_ticker_trigger(clock);
 	};
-}
+};
 
 function night_minute_hour_ticker_checker(clock) {
 	if (clock.night_clock.seconds >= (clock.night_clock.talmudicNightMinute - 1)) {
@@ -488,7 +488,7 @@ function night_minute_hour_ticker_checker(clock) {
 		clearInterval(nightTicker);
 		day_ticker_trigger(clock); 
 	};
-}
+};
 
 //Function that takes current day time from location and syncs time..//
 let regClockArray = '';
@@ -514,7 +514,7 @@ function reg_time_pull(utcOffset) {
 	clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime);
 	clock.regularTime.date = `${padArrayDisplay(regularTimePull.getMonth() + 1)}${(regularTimePull.getMonth() + 1)}, ${padArrayDisplay(regularTimePull.getDate())}${regularTimePull.getDate()}, ${regularTimePull.getFullYear()}`;
 	regClockArray = `${padArrayDisplay((armyTimeConverter(clock.regularTime.hours)))}${armyTimeConverter(clock.regularTime.hours)}:${padArrayDisplay(clock.regularTime.minutes)}${clock.regularTime.minutes}:${padArrayDisplay(clock.regularTime.seconds)}${clock.regularTime.seconds}`;
-}
+};
 
 
 let nightClockArray = '';
@@ -540,7 +540,7 @@ function time_sync(clock) {
 		}
 	resolve(clock);
 	})
-}
+};
 
 //PrayerTimeStore Functions//
 function prayer_sunrise_calcultor() {
@@ -552,7 +552,7 @@ function prayer_sunrise_calcultor() {
 		prayerTimeStore.sunrise = `${padArrayDisplay((armyTimeConverter(info_store.parsedArray[0] - clock.regularTime.timezoneOffset)))}${armyTimeConverter((info_store.parsedArray[0] - clock.regularTime.timezoneOffset))}:${padArrayDisplay((info_store.parsedArray[1]))}${(info_store.parsedArray[1])}:${padArrayDisplay((info_store.parsedArray[2]))}${(info_store.parsedArray[2])}`;
 	}
 	return prayerTimeStore.sunrise;
-}
+};
 
 function prayer_sunset_calcultor() {
 	splitAndParseInt(api_results.results.sunset);
@@ -563,7 +563,7 @@ function prayer_sunset_calcultor() {
 		prayerTimeStore.sunset = `${padArrayDisplay((armyTimeConverter(info_store.parsedArray[0] - clock.regularTime.timezoneOffset)))}${armyTimeConverter((info_store.parsedArray[0] - clock.regularTime.timezoneOffset))}:${padArrayDisplay((info_store.parsedArray[1]))}${(info_store.parsedArray[1])}:${padArrayDisplay((info_store.parsedArray[2]))}${(info_store.parsedArray[2])}`;
 	}
 	return prayerTimeStore.sunset;
-}
+};
 
 function prayer_latest_shema_calculator() {
 	let currentLatestShema= ((((clock.day_clock.dayLengthInSeconds / 12) * 3) + clock.regularTime.sunriseToday));
@@ -573,7 +573,7 @@ function prayer_latest_shema_calculator() {
 	prayerTimeStore.latest_shema.minutes = extractMinutesFromDecimal(currentLatestShemaHour);
 	prayerTimeStore.latest_shema.seconds = extractSecondsFromDecimal(currentLatestShemaInMinutes);
 	return prayerTimeStore.latest_shema;
-}
+};
 
 function prayer_latest_shacharit_calculator() {
 	let currentLatestShacharit= ((((clock.day_clock.dayLengthInSeconds / 12) * 4) + clock.regularTime.sunriseToday));
@@ -583,7 +583,7 @@ function prayer_latest_shacharit_calculator() {
 	prayerTimeStore.latest_shacharit.minutes = extractMinutesFromDecimal(currentLatestShacharitHour);
 	prayerTimeStore.latest_shacharit.seconds = extractSecondsFromDecimal(currentLatestShacharitInMinutes);
 	return prayerTimeStore.latest_shacharit;
-}
+};
 
 function prayer_midday_calculator() {
 	let currentMidday= ((((clock.day_clock.dayLengthInSeconds / 12) * 6) + clock.regularTime.sunriseToday));
@@ -593,7 +593,7 @@ function prayer_midday_calculator() {
 	prayerTimeStore.midday.minutes = extractMinutesFromDecimal(currentMiddayHour);
 	prayerTimeStore.midday.seconds = extractSecondsFromDecimal(currentMiddayInMinutes);
 	return prayerTimeStore.midday;
-}
+};
 
 function prayer_earliest_minchah_calculator() {
 	let currentEarliestMinchah= (((((clock.day_clock.dayLengthInSeconds / 12) * 6) + clock.regularTime.sunriseToday)) + 1800);
@@ -603,7 +603,7 @@ function prayer_earliest_minchah_calculator() {
 	prayerTimeStore.earliest_minchah.minutes = extractMinutesFromDecimal(currentEarliestMinchahHour);
 	prayerTimeStore.earliest_minchah.seconds = extractSecondsFromDecimal(currentEarliestMinchahInMinutes);
 	return prayerTimeStore.earliest_minchah;
-}
+};
 
 function prayer_minchah_ketanah_calculator() {
 	let currentMinchahKetanah= ((((clock.day_clock.dayLengthInSeconds / 12) * 9.5) + clock.regularTime.sunriseToday));
@@ -613,7 +613,7 @@ function prayer_minchah_ketanah_calculator() {
 	prayerTimeStore.minchah_ketanah.minutes = extractMinutesFromDecimal(currentMinchahKetanahHour);
 	prayerTimeStore.minchah_ketanah.seconds = extractSecondsFromDecimal(currentMinchahKetanahInMinutes);
 	return prayerTimeStore.minchah_ketanah;
-}
+};
 
 function prayer_plag_haminchah_calculator() {
 	let currentPlagHaminchah= ((((clock.day_clock.dayLengthInSeconds / 12) * 10.75) + clock.regularTime.sunriseToday));
@@ -623,7 +623,7 @@ function prayer_plag_haminchah_calculator() {
 	prayerTimeStore.plag_haminchah.minutes = extractMinutesFromDecimal(currentPlagHaminchahHour);
 	prayerTimeStore.plag_haminchah.seconds = extractSecondsFromDecimal(currentPlagHaminchahInMinutes);
 	return prayerTimeStore.plag_haminchah;
-}
+};
 
 function prayer_nightfall_threeStars_calculator() {
 	let currentNightfallThreeStars= (clock.regularTime.sunsetToday + 3000);
@@ -633,7 +633,7 @@ function prayer_nightfall_threeStars_calculator() {
 	prayerTimeStore.nightfall_threeStars.minutes = extractMinutesFromDecimal(currentNightfallThreeStarsHour);
 	prayerTimeStore.nightfall_threeStars.seconds = extractSecondsFromDecimal(currentNightfallThreeStarsInMinutes);
 	return prayerTimeStore.nightfall_threeStars;
-}
+};
 
 function prayer_nightfall_seventyTwoMinutes_calculator() {
 	let currentNightfallSeventyTwoMinutes = (clock.regularTime.sunsetToday + 4320);
@@ -643,7 +643,7 @@ function prayer_nightfall_seventyTwoMinutes_calculator() {
 	prayerTimeStore.nightfall_seventyTwoMinutes.minutes = extractMinutesFromDecimal(currentNightfallSeventyTwoMinutesHour);
 	prayerTimeStore.nightfall_seventyTwoMinutes.seconds = extractSecondsFromDecimal(currentNightfallSeventyTwoMinutesInMinutes);
 	return prayerTimeStore.nightfall_seventyTwoMinutes;
-}
+};
 
 function runAllPrayerCalculatorFunctions() {
 	prayer_sunrise_calcultor();
@@ -656,12 +656,12 @@ function runAllPrayerCalculatorFunctions() {
 	prayer_plag_haminchah_calculator();
 	prayer_nightfall_threeStars_calculator();
 	prayer_nightfall_seventyTwoMinutes_calculator();
-}
+};
 
 //Display Prayer Times Functions//
 function displayPrayerTimes(hours, minutes, seconds) {
 	return `${padArrayDisplay((armyTimeConverter(hours)))}${armyTimeConverter(hours)}:${padArrayDisplay(minutes)}${minutes}:${padArrayDisplay(seconds)}${seconds}`;
-}
+};
 
 //Simplifying Functions//
 function convertTimeToSeconds(time) {
@@ -674,7 +674,7 @@ function convertTimeToSeconds(time) {
 		info_store.timeInSeconds = ((((time[0] * 60) + (time[1])) * 60)  + time[2]);
 	};
 	return info_store.timeInSeconds;
-}
+};
 
 function convertTimeToSecondsUtc(time, utc) {
 	if (typeof time === "string" || time instanceof String) {
@@ -687,11 +687,11 @@ function convertTimeToSecondsUtc(time, utc) {
 		info_store.timeInSecondsUtc = (((((time[0] - utc) * 60) + (time[1])) * 60)  + time[2]);
 	};
 	return info_store.timeInSecondsUtc;
-}
+};
 
 function splitAndParseInt(time) {
 	info_store.parsedArray = [(parseInt((time.split(":"))[0])), (parseInt((time.split(":"))[1])), (parseInt((time.split(":"))[2]))];
-}
+};
 
 function pmSunriseConverter(time) {
 	pmOrAm = (time).split(" ");
@@ -702,7 +702,7 @@ function pmSunriseConverter(time) {
 	} else {
 		return info_store.parsedArray[0]
 	}
-}
+};
 
 function amSunsetConverter(time) {
 	pmOrAm = (time).split(" ");
@@ -713,18 +713,18 @@ function amSunsetConverter(time) {
 	} else {
 		return info_store.parsedArray[0]
 	}
-}
+};
 
 function spliceDecimalPoint(int) {
 	let numberSplit = (String(int)).split(".");
 	let splitParse = parseInt(numberSplit[1]);
 	info_store.minuteConversion = splitParse
 	return info_store.minuteConversion;
-}
+};
 
 function getlength(int) {
     return (((String(int)).replace('.', '')).length) - (String((Math.trunc(int)))).length;
-}
+};
 
 function padZero1(int) {
 	let paddedNumber = `1`;
@@ -732,7 +732,7 @@ function padZero1(int) {
 		paddedNumber = paddedNumber + `0`;
 	}
 	return parseInt(paddedNumber);
-}
+};
 
 function padZero(int) {
 	let paddedNumber = `number`;
@@ -741,7 +741,7 @@ function padZero(int) {
 	}
 	let parsedNumber = parseInt(paddedNumber)
 	return parsedNumber;
-}
+};
 
 function extractMinutesFromDecimal(number) {
 	let finalResult = 00;
@@ -758,7 +758,7 @@ function extractMinutesFromDecimal(number) {
 	} else {
 		return 00;
 	}
-}
+};
 
 function extractSecondsFromDecimal(number) {
 	let finalResult = 00;
@@ -788,7 +788,7 @@ function padArrayDisplay(int) {
 	} else {
 		return ``;
 	}
-}
+};
 
 function armyTimeConverter(hour) {
 	if (hour > 12) {
@@ -798,18 +798,18 @@ function armyTimeConverter(hour) {
 	} else {
 		return hour;
 	}
-}
+};
 
 
 /*Display and Trigger Functions*/
 //
 function locationDisplay(lat_lng) {
 	$('.location_display').html(`(${lat_lng.results[0].formatted_address})`);
-}
+};
 
 function dateDisplay() {
 	$('.date_display').html(`(${clock.regularTime.date})`);
-}
+};
 
 function settingsButton() {
 	$('.settings').on( "click",( event => {
@@ -823,7 +823,7 @@ function settingsButton() {
 			$('.settings_container').css("display", "none");
 		}
 	}));
-}
+};
 
 function list_viewToggle() {
 	$('.list-view').on( "click",( event => {
@@ -837,7 +837,7 @@ function list_viewToggle() {
 		dateDisplay();
 		returnToggle('.list_container');
 	}));
-}
+};
 
 function list_viewGenerator() {
 	$('.list_container').html(
@@ -856,7 +856,7 @@ function list_viewGenerator() {
 		</ul>
 		<button type="button" class="return_button"><p>Return</p></button>`
 	);
-}
+};
 
 function changeLocationToggle() {
 	$('.change-location').on( "click",( event => {
@@ -878,7 +878,7 @@ function changeLocationToggle() {
 		returnToggle('.list_container');
 		submit_location_change();
 	}));
-}
+};
 
 function submit_location_change() {
 	isValidZip = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/
@@ -907,11 +907,11 @@ function submit_location_change() {
 					};
 				})
 				.catch(err => {
-					alert(`Something went wrong: ${err.message}`);
+					alert(`Something went wrong: ${err.message}. Please try a correct zip code.`);
 					return});
 
 	}));
-}
+};
 
 function reportAProblemToggle() {
 	$('.report-a-problem').on( "click",( event => {
@@ -933,7 +933,7 @@ function reportAProblemToggle() {
 		returnToggle('.list_container');
 		submit_report_a_problem()
 	}));
-}
+};
 
 function submit_report_a_problem() {
 	$('.report_a_problem_form').on( "submit",( event => {
@@ -945,7 +945,7 @@ function submit_report_a_problem() {
 		$('.list_container').css("display", "none");
 		window.open(`mailto:theholycoder@gmail.com?subject=Problem With "The Talmudic Clock App" - Customer Report&body=${problemReport}`);
 	}));
-}
+};
 
 function returnToggle(holder) {
 	$('.list_container').on("click", ".return_button",( event => {
@@ -955,7 +955,7 @@ function returnToggle(holder) {
 		$('.analog_clock').css("display", "grid");
 		$(holder).css("display", "none")
 	}));
-}
+};
 
 function exitToggle(holder) {
 	$('.list_container').on("click", ".info_exit_button",( event => {
@@ -965,7 +965,7 @@ function exitToggle(holder) {
 		$('footer').css("display", "block");
 		$(holder).css("display", "none")
 	}));
-}
+};
 
 function infoFloater() {
 	$('.info').on( "click",( event => {
@@ -978,7 +978,7 @@ function infoFloater() {
 		infoGenerator();
 		exitToggle('.list_container');
 	}));
-}
+};
 
 function initialInfoLoad() {
 	$('.settings_container').css("display", "none");
@@ -987,7 +987,7 @@ function initialInfoLoad() {
 	$('.list_container').css("display", "grid");
 	infoGenerator();
 	exitToggle('.list_container');
-}
+};
 
 function infoGenerator() {
 	$('.list_container').html(
@@ -1011,7 +1011,7 @@ function infoGenerator() {
 		'</div>' +
 		'<button type="button" class="info_exit_button"><p>Exit</p></button>'
 	);
-}
+};
 
 function runAllSetting() {
 	initialInfoLoad();
@@ -1020,7 +1020,7 @@ function runAllSetting() {
 	changeLocationToggle();
 	reportAProblemToggle();
 	infoFloater();
-}
+};
 
 
 /*Displaying the Digital Clocks Side (DDCS)*/
@@ -1029,7 +1029,7 @@ function regular_digital_clock_display() {
 	$('.regularTimeDisplay').html(
 		`${regClockArray}`
 	)
-}
+};
 
 function talmudic_digital_clock_display() {
 	if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
@@ -1042,7 +1042,7 @@ function talmudic_digital_clock_display() {
 		)
 	}
 
-}
+};
 
 
 /*Drawing the Analog Clock Side (DACS)*/
@@ -1062,7 +1062,7 @@ function drawClock() {
 	} else {
 		drawTimeNight(ctx, radius);
 	}
-}
+};
   
 function drawFace(ctx, radius) {
 	let grad;
@@ -1090,7 +1090,7 @@ function drawFace(ctx, radius) {
 	ctx.stroke();
 	ctx.fillStyle = 'green';
 	ctx.fill();
-}
+};
 
 function drawNumbers(ctx, radius) {
 	let ang;
@@ -1109,7 +1109,7 @@ function drawNumbers(ctx, radius) {
 	  ctx.translate(0, radius * 0.85);
 	  ctx.rotate(-ang);
 	}
-}
+};
 
 function drawTimeNight(ctx, radius){
 	let hour = clock.night_clock.hours;
@@ -1125,7 +1125,7 @@ function drawTimeNight(ctx, radius){
 	// second
 	second = (second*Math.PI/(clock.night_clock.talmudicNightMinute / 2));
 	drawHand(ctx, second, radius*0.9, radius*0.02);
-}
+};
 
 function drawTimeDay(ctx, radius){
 	let hour = clock.day_clock.hours;
@@ -1141,7 +1141,7 @@ function drawTimeDay(ctx, radius){
 	// second
 	second = (second*Math.PI/(clock.day_clock.talmudicDayMinute / 2));
 	drawHand(ctx, second, radius*0.9, radius*0.02);
-}
+};
   
 function drawHand(ctx, pos, length, width) {
 	ctx.beginPath();
@@ -1152,7 +1152,7 @@ function drawHand(ctx, pos, length, width) {
 	ctx.lineTo(0, -length);
 	ctx.stroke();
 	ctx.rotate(-pos);
-}
+};
 
 
 /*Run All Functions*/
@@ -1161,6 +1161,6 @@ function run_all_functions() {
 	reg_time_pull(utcOffset);
 	initial_pull_and_new_day_toggle();
 	runAllSetting();
-}
+};
 
 run_all_functions();
