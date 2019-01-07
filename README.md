@@ -1,17 +1,14 @@
 # Talmudic Clock App
 
-The "Talmudic Clock App" is a modern sun-dial designed to quickly view Jewish prayer times.
-This app uses mathematical equations and API calls to create an engine to calculate and display the current talmudic hour.
-Additionally, using that same internal engine, common prayer times are determined based off the users current location or a selected location.
+The ["Talmudic Clock App"!](https://aarondovturkel.github.io/TalmudicClockApp/) is a modern sun-dial designed to display the hour of the day as calculated in Jewish law with reference to the varying lengths of the days and nights. It also allows you to list Jewish prayer times.
 
 ![Image of landing_page](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/landing_page.png)
 
 ## Usage
 
 The "Talmudic Clock App' opens with basic page info and instructions. Clicking the "exit" button 
-opens up the retro analog-clock interface. As described in the info section, this clock displays the
-"talmudic hour". According to Jewish law the Talmud calculates the time of day by dividing both the day (sunrise to sunset) 
-and night (sunset to sunrise) into twelve equal parts. This is known as "Shaos Zmanios"; which means "hour times" in english. 
+renders the analog-clock interface. As described in the info section, this clock displays the
+"talmudic hour". The Talmud uses "temporal hours" ("Shaos Zmanios" in Hebrew) which are one twelfth of the day (sunrise to sunset) and night (sunset to sunrise) to calculate correct prayer times.
 
 Following the instuctions found in the opening "info" section, clicking on the settings gear (located at the bottom-right
 of the view-port) will display a list of new options. 
