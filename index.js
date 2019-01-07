@@ -993,21 +993,16 @@ function infoGenerator() {
 	$('.list_container').html(
 		'<div class="list_container-insert">'	+
 			'<span class="info_header">Info</span> ' +
-			'<p class="info_paragraph">The "Talmudic Clock App" is a modern sun-dial designed ' +
-			'to quickly view Jewish prayer times. ' +
-			'According to Jewish law the Talmud calculates ' +
-			'the time of day by dividing both the day (sunrise to sunset) and night ' +
-			'(sunset to sunrise) into twelve equal parts. This is known as ' +
-			'"Shaos Zmanios"; which means "hour times" in english.</p>' +
+			'<p class="info_paragraph">The "Talmudic Clock App" is a modern sun-dial ' +
+			'designed to display the hour of the day as calculated in Jewish law with reference to ' +
+			'the varying lengths of the days and nights. It also allows you to list Jewish prayer times.</p>' +
 			'<br>' +
-			'<p>This app uses mathematical equations and API calls to create ' +
-			'an engine to calculate and display that "Shaos Zmanious" hour, ' +
-			'or talmudic hour.</p>' +
+			'<p>The Talmud uses "temporal hours" ("Shaos Zmanios" in Hebrew) which are one twelfth of the ' +
+			'day (sunrise to sunset) and night (sunset to sunrise) to calculate correct prayer times. ' +
+			'This app uses mathematical equations and API calls to create an engine to calculate and display that "Shaos Zmanios" hour, or talmudic hour.</p>' +
 			'<br>' +
-			'<p>Additionally, using that same internal engine, common ' +
-			'prayer times are determined based off the users ' +
-			'current location and displayed ' +
-			'in the "List-View" section located in the settings tab (the gear image).</p>' + 
+			'<p>Additionally, using that same internal engine, common prayer times are determined based on the ' +
+			'user\'s current location and are displayed in the "List Prayer Times" section located in the settings tab (the gear image).</p>' +
 		'</div>' +
 		'<button type="button" class="info_exit_button"><p>Exit</p></button>'
 	);
