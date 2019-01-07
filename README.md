@@ -19,3 +19,7 @@ of the view-port) will display a list of new options.
 ![Image of settings_gear] (https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_gear.png)
 
 ![Image of settings_list] (https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_list.png)
+
+
+![Image of settings_list] (TalmudicClockApp/project_images/settings_list.png)
+      
