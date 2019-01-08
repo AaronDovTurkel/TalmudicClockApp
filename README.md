@@ -1,4 +1,5 @@
-# Talmudic Clock App
+# <p align="center"><img width=12.5% src="https://github.com/anfederico/Clairvoyant/blob/master/media/Logo.png"></p> <p align="center"><img width=60% src="https://github.com/anfederico/Clairvoyant/blob/master/media/Clairvoyant.png"></p>
+Talmudic Clock App
 
 The ["Talmudic Clock App"](https://aarondovturkel.github.io/TalmudicClockApp/) is a modern sun-dial designed to display the hour of the day as calculated in Jewish law with reference to the varying lengths of the days and nights. It also allows you to list Jewish prayer times.
 
@@ -22,8 +23,17 @@ From here one can select:
       * To display a list of prayer times for your current location.
 3. "Change Location"
       * To change location by zip-code.
+      * This will also update both the analog and digital clocks, as well as prayer times, to coincide with the selected location.
 4. "Report a Problem"
-      * To email the developer with any problem with the users experience.
+      * To email the developer with any user experience problem.
+
+## Support
+
+## Road Map
+
+## Authors and Acknowledgment
+
+
 
 
       
