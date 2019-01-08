@@ -1,12 +1,12 @@
 <p align="center"><p align="center"><img width=100% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/talmudic_clock_app_logo.png"></p>
 
-The ["Talmudic Clock App"](https://aarondovturkel.github.io/TalmudicClockApp/) is a modern sun-dial designed to display the hour of the day as calculated in Jewish law with reference to the varying lengths of the days and nights. It also allows you to list Jewish prayer times.
+<p align="center">The ["Talmudic Clock App"](https://aarondovturkel.github.io/TalmudicClockApp/) is a modern sun-dial designed to display the hour of the day as calculated in Jewish law with reference to the varying lengths of the days and nights. It also allows you to list Jewish prayer times.</p>
 
 ## Usage
 
-<p align="center">The "Talmudic Clock App' opens with basic page info and instructions. Clicking the "exit" button 
+The "Talmudic Clock App' opens with basic page info and instructions. Clicking the "exit" button 
 renders the analog-clock interface. As described in the info section, this clock displays the
-"talmudic hour". The Talmud uses "temporal hours" ("Shaos Zmanios" in Hebrew) which are one twelfth of the day (sunrise to sunset) and night (sunset to sunrise) to calculate correct prayer times.</p>
+"talmudic hour". The Talmud uses "temporal hours" ("Shaos Zmanios" in Hebrew) which are one twelfth of the day (sunrise to sunset) and night (sunset to sunrise) to calculate correct prayer times.
 
 Clicking on the settings gear <p><img display="inline" width=5% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/steampunk-gear-clock.png"></p> (located at the bottom-right
 of the view-port) will display a list of new options. 
@@ -42,11 +42,13 @@ For support and inquiries please contact the [delevoper](mailto:"theholycoder@gm
 ## Road Map
 
 Sleek and simple with humble beginnings, this app plans to one day be on your local smart-watch. 
+<br>
 Keep an eye out!
 
 ### Authors and Acknowledgments
 
 The "Talmudic Clock App" is created and maintained by Aaron Dov Turkel.
+<br>
 A thanks to my mentor Ben Pardo and special friend RH.
 
 
