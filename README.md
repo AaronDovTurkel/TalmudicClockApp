@@ -48,7 +48,7 @@ Keep an eye out!
 
 The "Talmudic Clock App" is created and maintained by Aaron Dov Turkel.
 <br>
-A thanks to my mentor Ben Pardo and special friend RH.
+Shout-outs to my mentor, Ben Pardo, and to my special friend, RH.
 
 #### Support
 
