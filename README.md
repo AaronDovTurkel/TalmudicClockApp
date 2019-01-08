@@ -45,7 +45,8 @@ For support and inquiries please contact the [delevoper](mailto:"theholycoder@gm
 
 Sleek and simple with humble beginnings, this app plans to one day be on your local smart-watch. 
 <br>
-<p>Keep an eye out!</p><p align="end"><img width=35% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/analog_clock.png"></p>
+Keep an eye out!
+<p align="start"><img width=20% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/analog_clock.png"></p>
 
 ### Authors and Acknowledgments
 
