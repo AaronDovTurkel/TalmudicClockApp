@@ -37,16 +37,12 @@ From here one can select:
 
 <p align="end"><img width=35% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/report_a_problem_updated.png"></p>
 
-## Support
-
-For support and inquiries please contact the [delevoper](mailto:"theholycoder@gmail.com").
-
 ## Road Map
 
 Sleek and simple with humble beginnings, this app plans to one day be on your local smart-watch. 
 <br>
 Keep an eye out!
-<p align="start"><img width=20% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/analog_clock.png"></p>
+<p align="start"><img width=15% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/analog_clock.png"></p>
 
 ### Authors and Acknowledgments
 
@@ -54,6 +50,9 @@ The "Talmudic Clock App" is created and maintained by Aaron Dov Turkel.
 <br>
 A thanks to my mentor Ben Pardo and special friend RH.
 
+#### Support
+
+For support and inquiries please contact the [delevoper](mailto:"theholycoder@gmail.com").
 
 
       
