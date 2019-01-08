@@ -11,6 +11,8 @@ renders the analog-clock interface. As described in the info section, this clock
 <p>Clicking on the settings gear <img display="inline" width=5% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/steampunk-gear-clock.png"> (located at the bottom-right
 of the view-port) will display a list of new options.</p>
 
+<br>
+
 <p align="center"><img width=50% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/settings_list_small_cropped.png"></p>
 
 From here one can select:
