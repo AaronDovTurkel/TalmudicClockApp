@@ -1,4 +1,4 @@
-<p align="center" border="brown" ><p align="center"><img width=100% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/talmudic_clock_app_logo.png"></p>
+<p align="center"><p align="center"><img width=100% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/talmudic_clock_app_logo.png"></p>
 
 <p align="center">The <a href="https://aarondovturkel.github.io/TalmudicClockApp/">"Talmudic Clock App"</a> is a modern sun-dial designed to display the hour of the day as calculated in Jewish law with reference to the varying lengths of the days and nights. It also allows you to list Jewish prayer times.</p>
 
