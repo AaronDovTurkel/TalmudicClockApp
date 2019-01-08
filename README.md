@@ -4,9 +4,9 @@ The ["Talmudic Clock App"](https://aarondovturkel.github.io/TalmudicClockApp/) i
 
 ## Usage
 
-The "Talmudic Clock App' opens with basic page info and instructions. Clicking the "exit" button 
+<p align="center">The "Talmudic Clock App' opens with basic page info and instructions. Clicking the "exit" button 
 renders the analog-clock interface. As described in the info section, this clock displays the
-"talmudic hour". The Talmud uses "temporal hours" ("Shaos Zmanios" in Hebrew) which are one twelfth of the day (sunrise to sunset) and night (sunset to sunrise) to calculate correct prayer times.
+"talmudic hour". The Talmud uses "temporal hours" ("Shaos Zmanios" in Hebrew) which are one twelfth of the day (sunrise to sunset) and night (sunset to sunrise) to calculate correct prayer times.</p>
 
 Clicking on the settings gear <p><img display="inline" width=5% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/steampunk-gear-clock.png"></p> (located at the bottom-right
 of the view-port) will display a list of new options. 
@@ -41,7 +41,8 @@ For support and inquiries please contact the [delevoper](mailto:"theholycoder@gm
 
 ## Road Map
 
-Sleek and simple with humble beginnings, this app to grow with user feedback and one day be on your local smart-watch. Keep an eye out!
+Sleek and simple with humble beginnings, this app plans to one day be on your local smart-watch. 
+Keep an eye out!
 
 ### Authors and Acknowledgments
 
