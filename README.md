@@ -28,7 +28,7 @@ From here one can select:
 
 3. "Change Location"
       * To change location by zip-code.
-      * This will also update both the analog and digital clocks, as well as prayer times, to coincide with the selected location.
+      * This will also update both the analog and digital clocks, as well as prayer times.
 
 <p align="end"><img width=35% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/change_location.png"></p>
 
