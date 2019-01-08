@@ -181,7 +181,7 @@ $( document ).ready( function() {
 				.then(coordinates => sun_rise_sun_set_fetch_changed_location(coordinates)) 
 				.then(results => fetch_results_store(results))
 				.then(results => {
-					convertTimeToSecondsUtc(api_results.results.sunrise, clock.regularTime.timezoneOffset);
+					convertTimeToSecondsUtc(api_results.results.sunrise, (Math.abs(((utcOffset / 60) / 60))));
 					if (
 						info_store.timeInSecondsUtc >= clock.regularTime.regDayCurrentInSeconds
 					) {
@@ -514,7 +514,11 @@ $( document ).ready( function() {
 		clock.regularTime.seconds = regularTimePull.getSeconds();
 		clock.regularTime.milliseconds = regularTimePull.getMilliseconds();
 		clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
-		clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime);
+		if ((utcOffset !== 0) && (((regularTimePull.getUTCHours()) + ((utcOffset / 60) / 60)) < 0)) {
+			clock.regularTime.regDayCurrentInSeconds = (convertTimeToSeconds(clock.regularTime) + 43200);
+		} else {
+			clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime);
+		}
 		clock.regularTime.date = `${padArrayDisplay(regularTimePull.getMonth() + 1)}${(regularTimePull.getMonth() + 1)}, ${padArrayDisplay(regularTimePull.getDate())}${regularTimePull.getDate()}, ${regularTimePull.getFullYear()}`;
 		regClockArray = `${padArrayDisplay((armyTimeConverter(clock.regularTime.hours)))}${armyTimeConverter(clock.regularTime.hours)}:${padArrayDisplay(clock.regularTime.minutes)}${clock.regularTime.minutes}:${padArrayDisplay(clock.regularTime.seconds)}${clock.regularTime.seconds}`;
 	};
@@ -683,7 +687,7 @@ $( document ).ready( function() {
 		if (typeof time === "string" || time instanceof String) {
 			splitAndParseInt(time);
 			if (amOrPmSelector(time) === true)  {
-				amSunsetConverter(time)
+				amSunsetConverter(time);
 			} else {
 				pmSunriseConverter(time);
 			};
@@ -830,7 +834,9 @@ $( document ).ready( function() {
 	};
 
 	function armyTimeConverter(hour) {
-		if (hour > 12) {
+		if (hour > 24) {
+			return hour - 24;
+		} else if (hour > 12) {
 			return hour - 12;
 		} else if (hour === 00) {
 			return 12;
