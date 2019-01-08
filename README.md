@@ -1,5 +1,4 @@
-# <p align="center"><img width=12.5% src="https://github.com/anfederico/Clairvoyant/blob/master/media/Logo.png"></p> <p align="center"><img width=60% src="https://github.com/anfederico/Clairvoyant/blob/master/media/Clairvoyant.png"></p>
-Talmudic Clock App
+<p align="center"><p align="center"><img width=60% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_o,ages/talmudic_clock_app_logo.png"></p>
 
 The ["Talmudic Clock App"](https://aarondovturkel.github.io/TalmudicClockApp/) is a modern sun-dial designed to display the hour of the day as calculated in Jewish law with reference to the varying lengths of the days and nights. It also allows you to list Jewish prayer times.
 
