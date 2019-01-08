@@ -13,7 +13,7 @@ renders the analog-clock interface. As described in the info section, this clock
 Clicking on the settings gear (located at the bottom-right
 of the view-port) will display a list of new options. 
 
-![Image of settings_list](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_list_small.png)
+![Image of settings_list](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_list_small_cropped.png)
 
 From here one can select:
 1. "Info"
