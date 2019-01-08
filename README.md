@@ -15,7 +15,7 @@ of the view-port) will display a list of new options.
 
 ![Image of settings_gear](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_gear.png) 
 
-![Image of settings_list](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_list_small.png)
+![Image of settings_list](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_list_full_screen.png)
 
 
 
