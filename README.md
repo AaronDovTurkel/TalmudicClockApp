@@ -13,9 +13,9 @@ renders the analog-clock interface. As described in the info section, this clock
 Following the instuctions found in the opening "info" section, clicking on the settings gear (located at the bottom-right
 of the view-port) will display a list of new options. 
 
-![Image of settings_gear](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_gear.png)
+![Image of settings_gear](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_gear.png) 
 
-![Image of settings_list](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_list.png)
+![Image of settings_list](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_list_small.png)
 
 
 
