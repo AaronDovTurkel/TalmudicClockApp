@@ -11,7 +11,7 @@ renders the analog-clock interface. As described in the info section, this clock
 Clicking on the settings gear (located at the bottom-right
 of the view-port) will display a list of new options. 
 
-![Image of settings_list](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_list_small_cropped.png)
+<p align="center"><p align="center"><img width=50% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/settings_list_small_cropped.png"></p>
 
 From here one can select:
 1. "Info"
@@ -23,6 +23,7 @@ From here one can select:
       * This will also update both the analog and digital clocks, as well as prayer times, to coincide with the selected location.
 4. "Report a Problem"
       * To email the developer with any user experience problem.
+<p align="center"><p align="center"><img width=20% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/report_a_problem.png"></p>
 
 ## Support
 
