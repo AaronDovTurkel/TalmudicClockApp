@@ -308,7 +308,7 @@ footer {
     border: transparent;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 600px) and (orientation: portrait) {
     .title {
         font-size: 2.3em;
     }
@@ -327,7 +327,7 @@ footer {
     }
 }
 
-@media only screen and (max-width: 515px) {
+@media only screen and (max-width: 515px) and (orientation: portrait) {
     .title {
         font-size: 1.8em;
     }
@@ -346,7 +346,7 @@ footer {
     }
 }
 
-@media only screen and (max-width: 410px) {
+@media only screen and (max-width: 410px) and (orientation: portrait) {
     .title {
         font-size: 1.7em;
     }
@@ -381,7 +381,7 @@ footer {
     }
 }
 
-@media only screen and (max-width: 310px) {
+@media only screen and (max-width: 310px) and (orientation: portrait) {
     .title {
         font-size: 1.2em;
     }
@@ -418,4 +418,8 @@ footer {
     .location_display {
         font-size: .5em;
     }
+}
+
+@media only screen and (max-width: 750px) and (max-height: 750px) and (orientation: landscape) {
+
 }
