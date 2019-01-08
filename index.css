@@ -375,6 +375,10 @@ footer {
     .analog_clock_header {
         font-size: 1em;
     }
+
+    .location_display {
+        font-size: .7em;
+    }
 }
 
 @media only screen and (max-width: 310px) {
@@ -409,5 +413,9 @@ footer {
 
     .analog_clock_header {
         font-size: .8em;
+    }
+
+    .location_display {
+        font-size: .5em;
     }
 }
