@@ -41,8 +41,12 @@ For support and inquiries please contact the [delevoper](mailto:"theholycoder@gm
 
 ## Road Map
 
-## Authors and Acknowledgment
+Sleek and simple with humble beginnings, this app to grow with user feedback and one day be on your local smart-watch. Keep an eye out!
 
+### Authors and Acknowledgments
+
+The "Talmudic Clock App" is created and maintained by Aaron Dov Turkel.
+A thanks to my mentor Ben Pardo and special friend RH.
 
 
 
