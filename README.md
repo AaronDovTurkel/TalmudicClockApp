@@ -37,7 +37,7 @@ From here one can select:
 
 ## Support
 
-For support and inquiries please contact the [delevoper]("theholycoder@gmail.com").
+For support and inquiries please contact the [delevoper]("mailto:'theholycoder@gmail.com'").
 
 ## Road Map
 
