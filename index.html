@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="A modern Sun-Dial for Jewish  prayer times.">
-    <title>Document</title>
+    <meta name="description" content="A modern sun-dial that determines Jewish  prayer times.">
+    <title>Talmudic Clock App</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.css" rel="stylesheet">
     <link href="index.css" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css?family=Spicy+Rice" rel="stylesheet">
@@ -30,7 +30,7 @@
                 <header class="analog_clock_header">Talmudic Clock</header>
                 <canvas id="canvas" width="350px" height="350px"></canvas>
         </div>
-        <div class="settings_container" aria-controls="list_container">
+        <div class="settings_container" role="region" id="settings_container" aria-live="polite" aria-controls="list_container">
             <span class="settings_header">Settings</span>
             <ul class="settings-button-list">
                 <li class="info_button">
@@ -51,7 +51,7 @@
     </main>
     <footer>
         <span class="location_display"></span>
-        <button type="button" class="settings" alt="settings"></button>
+        <button type="button" class="settings" alt="settings" aria-controls="settings_container"></button>
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="index.js"></script>
