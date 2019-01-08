@@ -8,10 +8,10 @@ The "Talmudic Clock App' opens with basic page info and instructions. Clicking t
 renders the analog-clock interface. As described in the info section, this clock displays the
 "talmudic hour". The Talmud uses "temporal hours" ("Shaos Zmanios" in Hebrew) which are one twelfth of the day (sunrise to sunset) and night (sunset to sunrise) to calculate correct prayer times.
 
-Clicking on the settings gear <p align="center"><img width=5% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/steampunk-gear-clock.png"></p> (located at the bottom-right
+Clicking on the settings gear <p><img display="inline" width=5% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/steampunk-gear-clock.png"></p> (located at the bottom-right
 of the view-port) will display a list of new options. 
 
-<p align="center" display="inline"><img width=50% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/settings_list_small_cropped.png"></p>
+<p align="center"><img width=50% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/settings_list_small_cropped.png"></p>
 
 From here one can select:
 1. "Info"
