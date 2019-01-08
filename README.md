@@ -4,7 +4,7 @@
 
 ## Usage
 
-The "Talmudic Clock App' opens with basic page info and instructions. Clicking the "exit" button 
+The "Talmudic Clock App" opens with basic page info and instructions. Clicking the "exit" button 
 renders the analog-clock interface. As described in the info section, this clock displays the
 "talmudic hour". The Talmud uses "temporal hours" ("Shaos Zmanios" in Hebrew) which are one twelfth of the day (sunrise to sunset) and night (sunset to sunrise) to calculate correct prayer times.
 
