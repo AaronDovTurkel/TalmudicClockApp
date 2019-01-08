@@ -33,7 +33,7 @@ From here one can select:
 4. "Report a Problem"
       * To email the developer with any user experience problem.
 
-<p align="end"><img width=35% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/report_a_problem.png"></p>
+<p align="end"><img width=35% src="https://github.com/AaronDovTurkel/TalmudicClockApp/blob/master/project_images/report_a_problem_updated.png"></p>
 
 ## Support
 
