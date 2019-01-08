@@ -386,7 +386,7 @@ $( document ).ready( function() {
 	function day_night_length_calculator() {
 		return new Promise (function(resolve, reject) {
 			if (utcOffset !== 0) {
-				clock.regularTime.sunsetToday = convertTimeToSecondsUtc(api_results.results.sunset, (Math.abs(((utcOffset / 60) / 60))));
+				clock.regularTime.sunsetToday = ((convertTimeToSecondsUtc(api_results.results.sunset, (Math.abs(((utcOffset / 60) / 60))))) + 43200);
 			} else {
 				clock.regularTime.sunsetToday = convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
 			}
@@ -402,7 +402,6 @@ $( document ).ready( function() {
 			clock.day_clock.talmudicDayMinute = ((twelvePartsDay) / 60);
 			clock.night_clock.talmudicNightMinute = ((twelvePartsNight) / 60);
 			if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
-				// After sunrise but before sunset
 				clock.day_clock.currentTalmudicSecondFromSunrise = (clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday);
 				clock.night_clock.currentTalmudicSecondFromSunset = 00;
 			} else if ((((clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday)) <= 0) && (((clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday)) <= clock.regularTime.sunriseToday)) {
@@ -442,16 +441,19 @@ $( document ).ready( function() {
 	};
 
 	function night_ticker_trigger(clock) {
-		nightTicker = setInterval(() => {
-			clock.night_clock.seconds = clock.night_clock.seconds + 1;
-			night_minute_hour_ticker_checker(clock);
-			reg_time_pull(utcOffset);
-			nightClockArray = `${padArrayDisplay(clock.night_clock.hours)}${clock.night_clock.hours}:${padArrayDisplay(clock.night_clock.minutes)}${clock.night_clock.minutes}:${padArrayDisplay(clock.night_clock.seconds)}${clock.night_clock.seconds}`;
-			drawClock();
-			$(regular_digital_clock_display);
-			$(talmudic_digital_clock_display);
-		}, 1000)
-		nightTicker;
+		return new Promise ((resolve, reject) => {
+			nightTicker = setInterval(() => {
+				clock.night_clock.seconds = clock.night_clock.seconds + 1;
+				night_minute_hour_ticker_checker(clock);
+				reg_time_pull(utcOffset);
+				nightClockArray = `${padArrayDisplay(clock.night_clock.hours)}${clock.night_clock.hours}:${padArrayDisplay(clock.night_clock.minutes)}${clock.night_clock.minutes}:${padArrayDisplay(clock.night_clock.seconds)}${clock.night_clock.seconds}`;
+				drawClock();
+				$(regular_digital_clock_display);
+				$(talmudic_digital_clock_display);
+			}, 1000)
+			nightTicker;
+			resolve(clock);	
+		})
 	};
 
 	//Function that uses minute ticker (timeout) and increments the clock variables.//
@@ -680,7 +682,11 @@ $( document ).ready( function() {
 	function convertTimeToSecondsUtc(time, utc) {
 		if (typeof time === "string" || time instanceof String) {
 			splitAndParseInt(time);
-			pmSunriseConverter(time);
+			if (amOrPmSelector(time) === true)  {
+				amSunsetConverter(time)
+			} else {
+				pmSunriseConverter(time);
+			};
 			info_store.timeInSecondsUtc = (((((info_store.parsedArray[0] - utc) * 60) + (info_store.parsedArray[1])) * 60)  + info_store.parsedArray[2]);
 		} else if (typeof time === "object" || time instanceof Object) {
 			info_store.timeInSecondsUtc = (((((time.hours - utc) * 60 ) + (time.minutes)) * 60)  + time.seconds);
@@ -714,6 +720,16 @@ $( document ).ready( function() {
 		} else {
 			return info_store.parsedArray[0]
 		}
+	};
+
+	function amOrPmSelector(time) {
+		pmOrAm = (time).split(" ");
+		splitAndParseInt(time);
+		if (pmOrAm[1] === "AM") {
+			return true
+		} else {
+			return false
+		};
 	};
 
 	function spliceDecimalPoint(int) {
