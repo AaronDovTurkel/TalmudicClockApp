@@ -10,13 +10,20 @@ The "Talmudic Clock App' opens with basic page info and instructions. Clicking t
 renders the analog-clock interface. As described in the info section, this clock displays the
 "talmudic hour". The Talmud uses "temporal hours" ("Shaos Zmanios" in Hebrew) which are one twelfth of the day (sunrise to sunset) and night (sunset to sunrise) to calculate correct prayer times.
 
-Following the instuctions found in the opening "info" section, clicking on the settings gear (located at the bottom-right
+Clicking on the settings gear (located at the bottom-right
 of the view-port) will display a list of new options. 
-
-![Image of settings_gear](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_gear.png) 
 
 ![Image of settings_list](https://raw.githubusercontent.com/AaronDovTurkel/TalmudicClockApp/master/project_images/settings_list_full_screen.png)
 
+From here one can select:
+1. "Info"
+      * To display the app info.
+2. "List Prayer Times"
+      * To display a list of prayer times for your current location.
+3. "Change Location"
+      * To change location by zip-code.
+4. "Report a Problem"
+      * To email the developer with any problem with the users experience.
 
 
       
