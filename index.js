@@ -59,15 +59,13 @@ function geocodeing_google_fetch(zip_code) {
 	};
 	const queryString = formatQueryParams(params)
 	const url = geocoding_google_api.searchURL + '?' + queryString;
-
-	console.log(url);
   
 	return json_fetcher(url);
 };
 
-function changed_location_time_fetch(lat_lng) {
+function changed_location_time_fetch(coordinates) {
 	const params = {
-		location: lat_lng.results[0].geometry.location.lat + ',' + lat_lng.results[0].geometry.location.lng,
+		location: coordinates.results[0].geometry.location.lat + ',' + coordinates.results[0].geometry.location.lng,
 		timestamp: Math.floor(Date.now() / 1000),
 		key: utc_offset_google_api.apiKey,
 	};
@@ -80,10 +78,10 @@ function changed_location_time_fetch(lat_lng) {
 
 
 //Further API Fetch//
-function sun_rise_set_fetch(lat_lng) {
+function sun_rise_sun_set_fetch(coordinates) {
   const params = {
-    lat: lat_lng.loc.split(",")[0],
-	lng: lat_lng.loc.split(",")[1]
+    lat: coordinates.loc.split(",")[0],
+	lng: coordinates.loc.split(",")[1]
   };
 
   const queryString = formatQueryParams(params)
@@ -92,10 +90,12 @@ function sun_rise_set_fetch(lat_lng) {
   return json_fetcher(url);
 };
 
-function sun_rise_set_fetch_alt(lat_lng) {
+//Retrieves previous day sunrise and sunset...
+//- By Jewish law the new day only starts after sunrise.
+function sun_rise_sun_set_fetch_alt(coordinates) {
   const params = {
-    lat: lat_lng.loc.split(",")[0],
-	lng: lat_lng.loc.split(",")[1],
+    lat: coordinates.loc.split(",")[0],
+	lng: coordinates.loc.split(",")[1],
 	date: 'yesterday'
   };
 
@@ -105,10 +105,10 @@ function sun_rise_set_fetch_alt(lat_lng) {
   return json_fetcher(url);
 };
 
-function sun_rise_set_fetch_changed_location(lat_lng) {
+function sun_rise_sun_set_fetch_changed_location(coordinates) { 
 	const params = {
-	  lat: lat_lng.results[0].geometry.location.lat,
-	  lng: lat_lng.results[0].geometry.location.lng
+	  lat: coordinates.results[0].geometry.location.lat,
+	  lng: coordinates.results[0].geometry.location.lng
 	};
   
 	const queryString = formatQueryParams(params)
@@ -117,10 +117,10 @@ function sun_rise_set_fetch_changed_location(lat_lng) {
 	return json_fetcher(url);
 };
 
-function sun_rise_set_fetch_changed_location_alt(lat_lng) {
+function sun_rise_sun_set_fetch_changed_location_alt(coordinates) { 
 	const params = {
-		lat: lat_lng.results[0].geometry.location.lat,
-		lng: lat_lng.results[0].geometry.location.lng,
+		lat: coordinates.results[0].geometry.location.lat,
+		lng: coordinates.results[0].geometry.location.lng,
 		date: 'yesterday'
 	};
   
@@ -131,7 +131,7 @@ function sun_rise_set_fetch_changed_location_alt(lat_lng) {
 };
 
 //Variable creator function for fetch results//
-let api_results = '0'; 
+let api_results = ''; 
 
 function fetch_results_store(results) {
 	return new Promise (function(resolve, reject) {
@@ -145,7 +145,7 @@ let new_day = true;
 function initial_pull_and_new_day_toggle() {
 	return new Promise (function(resolve, reject) {
 		ip_geolocator_fetch()
-			.then(lat_lng => sun_rise_set_fetch(lat_lng))
+			.then(coordinates => sun_rise_sun_set_fetch(coordinates)) 
 			.then(results => fetch_results_store(results))
 			.then(results => {
 				convertTimeToSecondsUtc(api_results.results.sunrise, clock.regularTime.timezoneOffset);
@@ -170,14 +170,14 @@ function changed_location_time_pull(zip_code) {
 	clearInterval(dayTicker);
 	clearInterval(nightTicker);
 	geocodeing_google_fetch(zip_code)
-		.then(lat_lng => changed_location_time_fetch(lat_lng))
+		.then(coordinates => changed_location_time_fetch(coordinates))
 		.then(results => {
 			utcOffset = results.rawOffset;
 			reg_time_pull(utcOffset);
 		})
 		.then(() => {
 			geocodeing_google_fetch(zip_code)
-			.then(lat_lng => sun_rise_set_fetch_changed_location(lat_lng))
+			.then(coordinates => sun_rise_sun_set_fetch_changed_location(coordinates)) 
 			.then(results => fetch_results_store(results))
 			.then(results => {
 				convertTimeToSecondsUtc(api_results.results.sunrise, clock.regularTime.timezoneOffset);
@@ -203,7 +203,7 @@ function changed_location_time_pull(zip_code) {
 //Final API Fetches//
 function before_sunrise_promise() {
 	ip_geolocator_fetch()
-		.then(lat_lng => sun_rise_set_fetch_alt(lat_lng))
+		.then(coordinates => sun_rise_sun_set_fetch_alt(coordinates)) 
 		.then(results => fetch_results_store(results))
 		.then(results => day_night_length_calculator(results))
 		.then(clock => {
@@ -224,7 +224,7 @@ function before_sunrise_promise() {
 
 function after_sunrise_promise() {
 	ip_geolocator_fetch()
-		.then(lat_lng => sun_rise_set_fetch(lat_lng))
+		.then(coordinates => sun_rise_sun_set_fetch(coordinates)) 
 		.then(results => fetch_results_store(results))
 		.then(results => day_night_length_calculator(results))
 		.then(clock => {
@@ -242,7 +242,7 @@ function after_sunrise_promise() {
 
 function before_sunrise_promise_alt() {
 	geocodeing_google_fetch(zip_code)
-		.then(lat_lng => sun_rise_set_fetch_changed_location_alt(lat_lng))
+		.then(coordinates => sun_rise_sun_set_fetch_changed_location_alt(coordinates)) 
 		.then(results => fetch_results_store(results))
 		.then(results => day_night_length_calculator(results))
 		.then(clock => {
@@ -263,7 +263,7 @@ function before_sunrise_promise_alt() {
 
 function after_sunrise_promise_alt() {
 	geocodeing_google_fetch(zip_code)
-		.then(lat_lng => sun_rise_set_fetch_changed_location(lat_lng))
+		.then(coordinates => sun_rise_sun_set_fetch_changed_location(coordinates)) 
 		.then(results => fetch_results_store(results))
 		.then(results => day_night_length_calculator(results))
 		.then(clock => {
@@ -566,72 +566,72 @@ function prayer_sunset_calcultor() {
 };
 
 function prayer_latest_shema_calculator() {
-	let currentLatestShema= ((((clock.day_clock.dayLengthInSeconds / 12) * 3) + clock.regularTime.sunriseToday));
+	let currentLatestShema = ((((clock.day_clock.dayLengthInSeconds / 12) * 3) + clock.regularTime.sunriseToday));
 	let currentLatestShemaInMinutes = currentLatestShema / 60;
 	let currentLatestShemaHour = (currentLatestShemaInMinutes / 60);
 	prayerTimeStore.latest_shema.hours = Math.trunc(currentLatestShemaHour);
 	prayerTimeStore.latest_shema.minutes = extractMinutesFromDecimal(currentLatestShemaHour);
-	prayerTimeStore.latest_shema.seconds = extractSecondsFromDecimal(currentLatestShemaInMinutes);
+	prayerTimeStore.latest_shema.seconds = extractSecondsFromDecimalForListView(currentLatestShemaInMinutes);
 	return prayerTimeStore.latest_shema;
 };
 
 function prayer_latest_shacharit_calculator() {
-	let currentLatestShacharit= ((((clock.day_clock.dayLengthInSeconds / 12) * 4) + clock.regularTime.sunriseToday));
+	let currentLatestShacharit = ((((clock.day_clock.dayLengthInSeconds / 12) * 4) + clock.regularTime.sunriseToday));
 	let currentLatestShacharitInMinutes = currentLatestShacharit / 60;
 	let currentLatestShacharitHour = (currentLatestShacharitInMinutes / 60);
 	prayerTimeStore.latest_shacharit.hours = Math.trunc(currentLatestShacharitHour);
 	prayerTimeStore.latest_shacharit.minutes = extractMinutesFromDecimal(currentLatestShacharitHour);
-	prayerTimeStore.latest_shacharit.seconds = extractSecondsFromDecimal(currentLatestShacharitInMinutes);
+	prayerTimeStore.latest_shacharit.seconds = extractSecondsFromDecimalForListView(currentLatestShacharitInMinutes);
 	return prayerTimeStore.latest_shacharit;
 };
 
 function prayer_midday_calculator() {
-	let currentMidday= ((((clock.day_clock.dayLengthInSeconds / 12) * 6) + clock.regularTime.sunriseToday));
+	let currentMidday = ((((clock.day_clock.dayLengthInSeconds / 12) * 6) + clock.regularTime.sunriseToday));
 	let currentMiddayInMinutes = currentMidday/ 60;
 	let currentMiddayHour = (currentMiddayInMinutes / 60);
 	prayerTimeStore.midday.hours = Math.trunc(currentMiddayHour);
 	prayerTimeStore.midday.minutes = extractMinutesFromDecimal(currentMiddayHour);
-	prayerTimeStore.midday.seconds = extractSecondsFromDecimal(currentMiddayInMinutes);
+	prayerTimeStore.midday.seconds = extractSecondsFromDecimalForListView(currentMiddayInMinutes);
 	return prayerTimeStore.midday;
 };
 
 function prayer_earliest_minchah_calculator() {
-	let currentEarliestMinchah= (((((clock.day_clock.dayLengthInSeconds / 12) * 6) + clock.regularTime.sunriseToday)) + 1800);
+	let currentEarliestMinchah = (((((clock.day_clock.dayLengthInSeconds / 12) * 6) + clock.regularTime.sunriseToday)) + 1800);
 	let currentEarliestMinchahInMinutes = currentEarliestMinchah/ 60;
 	let currentEarliestMinchahHour = (currentEarliestMinchahInMinutes / 60);
 	prayerTimeStore.earliest_minchah.hours = Math.trunc(currentEarliestMinchahHour);
 	prayerTimeStore.earliest_minchah.minutes = extractMinutesFromDecimal(currentEarliestMinchahHour);
-	prayerTimeStore.earliest_minchah.seconds = extractSecondsFromDecimal(currentEarliestMinchahInMinutes);
+	prayerTimeStore.earliest_minchah.seconds = extractSecondsFromDecimalForListView(currentEarliestMinchahInMinutes);
 	return prayerTimeStore.earliest_minchah;
 };
 
 function prayer_minchah_ketanah_calculator() {
-	let currentMinchahKetanah= ((((clock.day_clock.dayLengthInSeconds / 12) * 9.5) + clock.regularTime.sunriseToday));
+	let currentMinchahKetanah = ((((clock.day_clock.dayLengthInSeconds / 12) * 9.5) + clock.regularTime.sunriseToday));
 	let currentMinchahKetanahInMinutes = currentMinchahKetanah / 60;
 	let currentMinchahKetanahHour = (currentMinchahKetanahInMinutes / 60);
 	prayerTimeStore.minchah_ketanah.hours = Math.trunc(currentMinchahKetanahHour);
 	prayerTimeStore.minchah_ketanah.minutes = extractMinutesFromDecimal(currentMinchahKetanahHour);
-	prayerTimeStore.minchah_ketanah.seconds = extractSecondsFromDecimal(currentMinchahKetanahInMinutes);
+	prayerTimeStore.minchah_ketanah.seconds = extractSecondsFromDecimalForListView(currentMinchahKetanahInMinutes);
 	return prayerTimeStore.minchah_ketanah;
 };
 
 function prayer_plag_haminchah_calculator() {
-	let currentPlagHaminchah= ((((clock.day_clock.dayLengthInSeconds / 12) * 10.75) + clock.regularTime.sunriseToday));
+	let currentPlagHaminchah = ((((clock.day_clock.dayLengthInSeconds / 12) * 10.75) + clock.regularTime.sunriseToday));
 	let currentPlagHaminchahInMinutes = currentPlagHaminchah / 60;
 	let currentPlagHaminchahHour = (currentPlagHaminchahInMinutes / 60);
 	prayerTimeStore.plag_haminchah.hours = Math.trunc(currentPlagHaminchahHour);
 	prayerTimeStore.plag_haminchah.minutes = extractMinutesFromDecimal(currentPlagHaminchahHour);
-	prayerTimeStore.plag_haminchah.seconds = extractSecondsFromDecimal(currentPlagHaminchahInMinutes);
+	prayerTimeStore.plag_haminchah.seconds = extractSecondsFromDecimalForListView(currentPlagHaminchahInMinutes);
 	return prayerTimeStore.plag_haminchah;
 };
 
 function prayer_nightfall_threeStars_calculator() {
-	let currentNightfallThreeStars= (clock.regularTime.sunsetToday + 3000);
+	let currentNightfallThreeStars = (clock.regularTime.sunsetToday + 3000);
 	let currentNightfallThreeStarsInMinutes = currentNightfallThreeStars/ 60;
 	let currentNightfallThreeStarsHour = (currentNightfallThreeStarsInMinutes / 60);
 	prayerTimeStore.nightfall_threeStars.hours = Math.trunc(currentNightfallThreeStarsHour);
 	prayerTimeStore.nightfall_threeStars.minutes = extractMinutesFromDecimal(currentNightfallThreeStarsHour);
-	prayerTimeStore.nightfall_threeStars.seconds = extractSecondsFromDecimal(currentNightfallThreeStarsInMinutes);
+	prayerTimeStore.nightfall_threeStars.seconds = extractSecondsFromDecimalForListView(currentNightfallThreeStarsInMinutes);
 	return prayerTimeStore.nightfall_threeStars;
 };
 
@@ -641,7 +641,7 @@ function prayer_nightfall_seventyTwoMinutes_calculator() {
 	let currentNightfallSeventyTwoMinutesHour = (currentNightfallSeventyTwoMinutesInMinutes / 60);
 	prayerTimeStore.nightfall_seventyTwoMinutes.hours = Math.trunc(currentNightfallSeventyTwoMinutesHour);
 	prayerTimeStore.nightfall_seventyTwoMinutes.minutes = extractMinutesFromDecimal(currentNightfallSeventyTwoMinutesHour);
-	prayerTimeStore.nightfall_seventyTwoMinutes.seconds = extractSecondsFromDecimal(currentNightfallSeventyTwoMinutesInMinutes);
+	prayerTimeStore.nightfall_seventyTwoMinutes.seconds = extractSecondsFromDecimalForListView(currentNightfallSeventyTwoMinutesInMinutes);
 	return prayerTimeStore.nightfall_seventyTwoMinutes;
 };
 
@@ -752,7 +752,7 @@ function extractMinutesFromDecimal(number) {
 		if ((String(minuteConverted)).includes("e") === true) {
 			finalResult = 00;
 		} else {
-			finalResult = (parseInt(String(minuteConverted).substring(0, 2)));
+			finalResult = Math.round(minuteConverted);
 		}
 		return finalResult;
 	} else {
@@ -774,13 +774,35 @@ function extractSecondsFromDecimal(number) {
 		if ((String(minuteConverted)).includes("e") === true) {
 			finalResult = 00;
 		} else {
-			finalResult = (parseInt(String(minuteConverted).substring(0, 2)));
+			finalResult = Math.round(minuteConverted);
 		};
 		return finalResult;
 	} else {
 		return 00;
 	}
-}
+};
+
+function extractSecondsFromDecimalForListView(number) {
+	let finalResult = 00;
+	let minuteConverted = 00;
+	if ((number - (Math.floor(number))) !== 0) {
+		spliceDecimalPoint(number);
+		let lengthOfDecimal = getlength(number);
+		if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
+			minuteConverted = ((info_store.minuteConversion * 60) / padZero1(lengthOfDecimal));
+		} else {
+			minuteConverted = ((info_store.minuteConversion * 60) / padZero1(lengthOfDecimal));
+		};
+		if ((String(minuteConverted)).includes("e") === true) {
+			finalResult = 00;
+		} else {
+			finalResult = Math.round(minuteConverted);
+		};
+		return finalResult;
+	} else {
+		return 00;
+	}
+};
 
 function padArrayDisplay(int) {
 	if ((String(int).length) === 1) {
@@ -803,8 +825,8 @@ function armyTimeConverter(hour) {
 
 /*Display and Trigger Functions*/
 //
-function locationDisplay(lat_lng) {
-	$('.location_display').html(`(${lat_lng.results[0].formatted_address})`);
+function locationDisplay(coordinates) {
+	$('.location_display').html(`(${coordinates.results[0].formatted_address})`);
 };
 
 function dateDisplay() {
@@ -887,8 +909,8 @@ function submit_location_change() {
 		zip_code = $('#zip_code').val();
 		let isValid = /^[0-9]{5}(?:-[0-9]{4})?$/.test(zip_code);
 		geocodeing_google_fetch(zip_code)
-				.then(lat_lng => {
-					locationDisplay(lat_lng);
+				.then(coordinates => {
+					locationDisplay(coordinates);
 					if (isValid) {
 						console.log(`Valid Zip Code`);
 						changed_location_time_pull(zip_code);
