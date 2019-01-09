@@ -386,7 +386,11 @@ $( document ).ready( function() {
 	function day_night_length_calculator() {
 		return new Promise (function(resolve, reject) {
 			if (utcOffset !== 0) {
-				clock.regularTime.sunsetToday = ((convertTimeToSecondsUtc(api_results.results.sunset, (Math.abs(((utcOffset / 60) / 60))))) + 43200);
+				if (amOrPmSelector(api_results.results.sunset)) {
+					clock.regularTime.sunsetToday = ((convertTimeToSecondsUtc(api_results.results.sunset, (Math.abs(((utcOffset / 60) / 60))))) + 43200);
+				} else {
+					clock.regularTime.sunsetToday = ((convertTimeToSecondsUtc(api_results.results.sunset, ((Math.abs(((utcOffset / 60) / 60))) + 12))) + 43200);
+				}
 			} else {
 				clock.regularTime.sunsetToday = convertTimeToSecondsUtc(api_results.results.sunset, clock.regularTime.timezoneOffset);
 			}
@@ -402,6 +406,7 @@ $( document ).ready( function() {
 			clock.day_clock.talmudicDayMinute = ((twelvePartsDay) / 60);
 			clock.night_clock.talmudicNightMinute = ((twelvePartsNight) / 60);
 			if (((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) >= 0) && ((clock.regularTime.regDayCurrentInSeconds - clock.regularTime.sunriseToday) <= clock.day_clock.dayLengthInSeconds)) {
+				// After sunrise but before sunset
 				clock.day_clock.currentTalmudicSecondFromSunrise = (clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday);
 				clock.night_clock.currentTalmudicSecondFromSunset = 00;
 			} else if ((((clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday)) <= 0) && (((clock.regularTime.regDayCurrentInSeconds) - (clock.regularTime.sunriseToday)) <= clock.regularTime.sunriseToday)) {
@@ -515,7 +520,11 @@ $( document ).ready( function() {
 		clock.regularTime.milliseconds = regularTimePull.getMilliseconds();
 		clock.regularTime.timezoneOffset = ((regularTimePull.getTimezoneOffset()) / 60);
 		if ((utcOffset !== 0) && (((regularTimePull.getUTCHours()) + ((utcOffset / 60) / 60)) < 0)) {
-			clock.regularTime.regDayCurrentInSeconds = (convertTimeToSeconds(clock.regularTime) + 43200);
+			if ((clock.regularTime.hours > 12)) {
+				clock.regularTime.regDayCurrentInSeconds = (convertTimeToSecondsUtc(clock.regularTime, 12) + 43200);
+			} else {
+				clock.regularTime.regDayCurrentInSeconds = (convertTimeToSeconds(clock.regularTime) + 43200);
+			};
 		} else {
 			clock.regularTime.regDayCurrentInSeconds = convertTimeToSeconds(clock.regularTime);
 		}
